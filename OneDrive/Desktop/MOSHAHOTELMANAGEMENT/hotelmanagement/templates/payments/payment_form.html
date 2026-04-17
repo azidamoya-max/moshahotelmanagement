@@ -3,86 +3,124 @@
 {% block title %}Record Payment{% endblock %}
 
 {% block content %}
-
-<div class="mb-4">
-    <h2 class="page-title">Record New Payment</h2>
-    <p style="color: #C6A75E;">Fill in the details to record a payment</p>
-</div>
-
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header text-white" style="background-color: #1F3A44;">
-                <h5 class="mb-0">➕ New Payment</h5>
-            </div>
-            <div class="card-body p-4">
-                <form method="POST">
-                    {% csrf_token %}
-
-                    <div class="mb-3">
-                        <label class="form-label fw-bold" style="color: #1F3A44;">Guest</label>
-                        {{ form.guest }}
-                        {% if form.guest.errors %}
-                            {% for error in form.guest.errors %}
-                                <div class="text-danger small mt-1">⚠️ {{ error }}</div>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-bold" style="color: #1F3A44;">Room</label>
-                        {{ form.room }}
-                        {% if form.room.errors %}
-                            {% for error in form.room.errors %}
-                                <div class="text-danger small mt-1">⚠️ {{ error }}</div>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-bold" style="color: #1F3A44;">Amount (UGX)</label>
-                        {{ form.amount }}
-                        {% if form.amount.errors %}
-                            {% for error in form.amount.errors %}
-                                <div class="text-danger small mt-1">⚠️ {{ error }}</div>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-bold" style="color: #1F3A44;">Payment Type</label>
-                        {{ form.payment_type }}
-                        {% if form.payment_type.errors %}
-                            {% for error in form.payment_type.errors %}
-                                <div class="text-danger small mt-1">⚠️ {{ error }}</div>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="form-label fw-bold" style="color: #1F3A44;">Payment Date</label>
-                        {{ form.payment_date }}
-                        {% if form.payment_date.errors %}
-                            {% for error in form.payment_date.errors %}
-                                <div class="text-danger small mt-1">⚠️ {{ error }}</div>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
-
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary px-4">
-                            Record Payment
-                        </button>
-                        <a href="{% url 'payment_list' %}" class="btn px-4"
-                           style="background-color: #C6A75E; color: white;">
-                            Cancel
-                        </a>
-                    </div>
-
-                </form>
-            </div>
-        </div>
+<div>
+  <!-- Header -->
+  <div style="margin-bottom:2rem;">
+    <h2 style="font-family:'Noto Serif',serif;font-size:2.5rem;color:#8b4c11;font-weight:700;">Financial Ledger</h2>
+    <div style="display:flex;align-items:center;gap:1rem;color:#4f453e;margin-top:.5rem;">
+      <span>💳</span>
+      <span style="font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;">Mobile Money & Cash Revenue</span>
+      <span style="padding:.1rem .5rem;background:#fdd9c0;color:#785d49;font-size:.75rem;font-weight:700;border-radius:4px;">UGX</span>
     </div>
-</div>
+  </div>
 
+  <!-- Main Grid -->
+  <div style="display:grid;grid-template-columns:1fr 2fr;gap:2rem;align-items:start;">
+
+    <!-- Payment Form -->
+    <div style="background:white;padding:2rem;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.04);border:1px solid #eeeeee;">
+      <h3 style="font-family:'Noto Serif',serif;font-size:1.2rem;margin-bottom:2rem;">Record New Transaction</h3>
+
+      <form method="POST">
+        {% csrf_token %}
+
+        <!-- Guest -->
+        <div style="margin-bottom:1.2rem;">
+          <label style="font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:#8b4c11;display:block;margin-bottom:.5rem;">Guest</label>
+          <select name="guest" style="width:100%;padding:.75rem 1rem;background:#f3f3f3;border:none;border-radius:8px;font-size:.9rem;" required>
+            <option value="">— Select guest —</option>
+            {% for guest in guests %}
+              <option value="{{ guest.pk }}">{{ guest.first_name }} {{ guest.last_name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Room -->
+        <div style="margin-bottom:1.2rem;">
+          <label style="font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:#8b4c11;display:block;margin-bottom:.5rem;">Room</label>
+          <select name="room" style="width:100%;padding:.75rem 1rem;background:#f3f3f3;border:none;border-radius:8px;font-size:.9rem;" required>
+            <option value="">— Select room —</option>
+            {% for room in rooms %}
+              <option value="{{ room.pk }}">Room {{ room.room_number }} — {{ room.get_room_category_display }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Amount -->
+        <div style="margin-bottom:1.2rem;">
+          <label style="font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:#8b4c11;display:block;margin-bottom:.5rem;">Amount (UGX)</label>
+          <div style="position:relative;">
+            <span style="position:absolute;left:1rem;top:50%;transform:translateY(-50%);color:#4f453e;font-size:.85rem;">UGX</span>
+            <input type="number" name="amount" placeholder="0.00"
+              style="width:100%;padding:.75rem 1rem .75rem 3.5rem;background:#f3f3f3;border:none;border-radius:8px;font-size:.9rem;" required />
+          </div>
+        </div>
+
+        <!-- Payment Type -->
+        <div style="margin-bottom:1.2rem;">
+          <label style="font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:#8b4c11;display:block;margin-bottom:.5rem;">Payment Type</label>
+          <select name="payment_type" style="width:100%;padding:.75rem 1rem;background:#f3f3f3;border:none;border-radius:8px;font-size:.9rem;" required>
+            <option value="mobile_money">📱 Mobile Money</option>
+            <option value="cash">💵 Cash</option>
+          </select>
+        </div>
+
+        <!-- Date -->
+        <div style="margin-bottom:2rem;">
+          <label style="font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:#8b4c11;display:block;margin-bottom:.5rem;">Payment Date</label>
+          <input type="date" name="payment_date"
+            style="width:100%;padding:.75rem 1rem;background:#f3f3f3;border:none;border-radius:8px;font-size:.9rem;" required />
+        </div>
+
+        <!-- Submit -->
+        <button type="submit"
+          style="width:100%;padding:1rem;background:#a96428;color:white;font-weight:700;border:none;border-radius:8px;font-size:.95rem;cursor:pointer;">
+          ✅ Record Payment
+        </button>
+
+      </form>
+    </div>
+
+    <!-- Payments Table -->
+    <div style="background:white;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.04);">
+      <div style="padding:1.5rem 2rem;border-bottom:1px solid #eeeeee;display:flex;justify-content:space-between;align-items:center;">
+        <h3 style="font-family:'Noto Serif',serif;font-size:1.2rem;margin:0;">Recent Activity</h3>
+        <a href="{% url 'payment_list' %}" style="font-size:.75rem;color:#8b4c11;font-weight:700;text-decoration:none;">View All →</a>
+      </div>
+
+      <table style="width:100%;border-collapse:collapse;text-align:left;">
+        <thead>
+          <tr style="background:#f3f3f3;">
+            <th style="padding:1rem 1.5rem;font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:#4f453e;">Amount</th>
+            <th style="padding:1rem 1.5rem;font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:#4f453e;">Type</th>
+            <th style="padding:1rem 1.5rem;font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:#4f453e;">Date</th>
+            <th style="padding:1rem 1.5rem;font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:#4f453e;">Room</th>
+            <th style="padding:1rem 1.5rem;font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:#4f453e;">Guest</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for payment in payments %}
+          <tr style="border-bottom:1px solid #f3f3f3;">
+            <td style="padding:1.2rem 1.5rem;font-family:'Noto Serif',serif;font-size:1.1rem;color:#8b4c11;font-weight:700;">
+              {{ payment.amount|floatformat:0 }} <span style="font-size:.7rem;">UGX</span>
+            </td>
+            <td style="padding:1.2rem 1.5rem;font-size:.85rem;">
+              {% if payment.payment_type == 'mobile_money' %}📱{% else %}💵{% endif %}
+              {{ payment.get_payment_type_display }}
+            </td>
+            <td style="padding:1.2rem 1.5rem;font-size:.85rem;color:#4f453e;">{{ payment.payment_date }}</td>
+            <td style="padding:1.2rem 1.5rem;font-size:.85rem;font-weight:700;">Room {{ payment.room.room_number }}</td>
+            <td style="padding:1.2rem 1.5rem;font-size:.85rem;">{{ payment.guest }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5" style="padding:3rem;text-align:center;color:#4f453e;font-size:.9rem;">No payments recorded yet.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
 {% endblock %}

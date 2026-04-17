@@ -1,70 +1,93 @@
 {% extends 'base.html' %}
-
 {% block title %}Payments{% endblock %}
-
 {% block content %}
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h2 class="page-title">Payments</h2>
-        <p style="color: #C6A75E;">Manage all hotel payments</p>
-    </div>
-    <a href="{% url 'payment_create' %}" class="btn btn-primary px-4 py-2">
-        + Record New Payment
-    </a>
+<!-- Hero Section -->
+<div style="position:relative;height:280px;width:100%;border-radius:16px;overflow:hidden;margin-bottom:2rem;">
+  <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZwWoA7vRma2M_d4BTKCQxrQuikwvpi5BmFKpJa9L3gC8OjLbjlknbKbOg_-6w12PSTht0jdSei0K8OlszbdjDR6Z2HZtRulofzPA2_7Mq7TODjZpHrunLtrCidTiGdxiSZ6B7Vod07FIGi8_Nj7mjGqfh6alIKgENN2EL44Td6i00tOxzswrdSde0Tt39lVxRGX122LFLyQnJ4I5r8ZBAlkrM635xS-of6myy2oFyCDNOdfYRGcbwLeuv8BX5lckr8PRWznlzKZQ"
+       alt="Hotel Payments"
+       style="width:100%;height:100%;object-fit:cover;">
+  <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(31,58,68,.7),transparent);display:flex;flex-direction:column;justify-content:flex-end;padding:2rem 3rem;">
+    <span style="font-size:.7rem;text-transform:uppercase;letter-spacing:.2em;color:#ffdcc4;font-weight:700;margin-bottom:.5rem;">Finance</span>
+    <h2 style="font-family:'Noto Serif',serif;font-size:2.5rem;color:white;margin:0;">Financial Ledger</h2>
+  </div>
 </div>
 
-<!-- Stats -->
-<div class="row mb-4">
-    <div class="col-md-4">
-        <div class="card p-3 text-center">
-            <h6 style="color: #C6A75E;">Total Payments</h6>
-            <h2 class="page-title">{{ payments|length }}</h2>
-        </div>
-    </div>
+<!-- Header -->
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+  <div>
+    <h2 style="font-family:'Noto Serif',serif;font-size:1.8rem;color:#1F3A44;margin:0;">Payments</h2>
+    <p style="color:#C6A75E;margin:.3rem 0 0;">Mobile Money & Cash Revenue</p>
+  </div>
+  <a href="{% url 'payment_create' %}"
+     style="background:linear-gradient(135deg,#1F3A44,#2d5568);color:white;padding:.75rem 1.5rem;border-radius:10px;text-decoration:none;font-weight:700;font-size:.9rem;">
+    + Record Payment
+  </a>
+</div>
+
+<!-- Stats Cards -->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem;max-width:500px;">
+  <div style="background:white;padding:1.5rem;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);text-align:center;">
+    <p style="font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:#C6A75E;font-weight:700;margin:0 0 .5rem;">Total Payments</p>
+    <h2 style="font-family:'Noto Serif',serif;font-size:2.5rem;color:#1F3A44;margin:0;">{{ payments|length }}</h2>
+  </div>
+  <div style="background:white;padding:1.5rem;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);text-align:center;">
+    <p style="font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:#C6A75E;font-weight:700;margin:0 0 .5rem;">Total Revenue</p>
+    <h2 style="font-family:'Noto Serif',serif;font-size:2rem;color:#1F3A44;margin:0;">
+      {% for payment in payments %}
+        {% if forloop.last %}UGX{% endif %}
+      {% endfor %}
+      {{ total_revenue|default:"0" }}
+    </h2>
+  </div>
 </div>
 
 <!-- Payments Table -->
-<div class="card">
-    <div class="card-body">
-        <table class="table table-hover table-bordered align-middle">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Guest</th>
-                    <th>Room</th>
-                    <th>Amount (UGX)</th>
-                    <th>Payment Type</th>
-                    <th>Payment Date</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for payment in payments %}
-                <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td>{{ payment.guest }}</td>
-                    <td>Room {{ payment.room.room_number }}</td>
-                    <td>UGX {{ payment.amount|floatformat:0 }}</td>
-                    <td>{{ payment.get_payment_type_display }}</td>
-                    <td>{{ payment.payment_date }}</td>
-                    <td>
-                        <a href="{% url 'payment_delete' payment.pk %}"
-                           class="btn btn-sm btn-danger">
-                            Delete
-                        </a>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="7" class="text-center" style="color:#C6A75E;">
-                        No payments recorded yet.
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+<div style="background:white;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.04);">
+  <div style="padding:1.5rem 2rem;border-bottom:1px solid #eeeeee;">
+    <h3 style="font-family:'Noto Serif',serif;font-size:1.2rem;color:#1F3A44;margin:0;">Recent Activity</h3>
+  </div>
+
+  <table style="width:100%;border-collapse:collapse;text-align:left;">
+    <thead>
+      <tr style="background:#1F3A44;">
+        <th style="padding:1rem 1.5rem;font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:#C6A75E;">#</th>
+        <th style="padding:1rem 1.5rem;font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:#C6A75E;">Guest</th>
+        <th style="padding:1rem 1.5rem;font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:#C6A75E;">Room</th>
+        <th style="padding:1rem 1.5rem;font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:#C6A75E;">Amount</th>
+        <th style="padding:1rem 1.5rem;font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:#C6A75E;">Type</th>
+        <th style="padding:1rem 1.5rem;font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:#C6A75E;">Date</th>
+        <th style="padding:1rem 1.5rem;font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:#C6A75E;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for payment in payments %}
+      <tr style="border-bottom:1px solid #f3f3f3;">
+        <td style="padding:1.2rem 1.5rem;color:#4f453e;">{{ forloop.counter }}</td>
+        <td style="padding:1.2rem 1.5rem;font-size:.9rem;font-weight:600;color:#1F3A44;">{{ payment.guest }}</td>
+        <td style="padding:1.2rem 1.5rem;font-size:.9rem;">Room {{ payment.room.room_number }}</td>
+        <td style="padding:1.2rem 1.5rem;font-family:'Noto Serif',serif;font-size:1.1rem;color:#8b4c11;font-weight:700;">
+          {{ payment.amount|floatformat:0 }} <span style="font-size:.7rem;">UGX</span>
+        </td>
+        <td style="padding:1.2rem 1.5rem;font-size:.9rem;">
+          {% if payment.payment_type == 'mobile_money' %}📱{% else %}💵{% endif %}
+          {{ payment.get_payment_type_display }}
+        </td>
+        <td style="padding:1.2rem 1.5rem;font-size:.9rem;color:#4f453e;">{{ payment.payment_date }}</td>
+        <td style="padding:1.2rem 1.5rem;">
+          <a href="{% url 'payment_delete' payment.pk %}"
+             style="background:#dc3545;color:white;padding:.4rem .9rem;border-radius:6px;text-decoration:none;font-size:.8rem;font-weight:700;">
+            Delete
+          </a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="7" style="padding:3rem;text-align:center;color:#C6A75E;">No payments recorded yet.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
 
 {% endblock %}

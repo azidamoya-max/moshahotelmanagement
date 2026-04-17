@@ -1,58 +1,95 @@
 {% extends 'base.html' %}
-
 {% block title %}Reports{% endblock %}
-
 {% block content %}
 
-<div class="mb-4">
-    <h2 class="page-title">Reports & Statistics</h2>
-    <p style="color: #C6A75E;">Overview of hotel performance</p>
+<!-- Hero Section -->
+<div style="position:relative;height:280px;width:100%;border-radius:16px;overflow:hidden;margin-bottom:2rem;">
+  <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZwWoA7vRma2M_d4BTKCQxrQuikwvpi5BmFKpJa9L3gC8OjLbjlknbKbOg_-6w12PSTht0jdSei0K8OlszbdjDR6Z2HZtRulofzPA2_7Mq7TODjZpHrunLtrCidTiGdxiSZ6B7Vod07FIGi8_Nj7mjGqfh6alIKgENN2EL44Td6i00tOxzswrdSde0Tt39lVxRGX122LFLyQnJ4I5r8ZBAlkrM635xS-of6myy2oFyCDNOdfYRGcbwLeuv8BX5lckr8PRWznlzKZQ"
+       alt="Reports"
+       style="width:100%;height:100%;object-fit:cover;">
+  <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(31,58,68,.7),transparent);display:flex;flex-direction:column;justify-content:flex-end;padding:2rem 3rem;">
+    <span style="font-size:.7rem;text-transform:uppercase;letter-spacing:.2em;color:#ffdcc4;font-weight:700;margin-bottom:.5rem;">Analytics</span>
+    <h2 style="font-family:'Noto Serif',serif;font-size:2.5rem;color:white;margin:0;">Hotel Performance</h2>
+  </div>
 </div>
 
-<!-- Stats Cards Row 1 -->
-<div class="row mb-4">
-    <div class="col-md-4">
-        <div class="card p-4 text-center">
-            <h6 style="color: #C6A75E;">Total Guests</h6>
-            <h2 class="page-title">{{ total_guests }}</h2>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card p-4 text-center">
-            <h6 style="color: #C6A75E;">Total Rooms</h6>
-            <h2 class="page-title">{{ total_rooms }}</h2>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card p-4 text-center">
-            <h6 style="color: #C6A75E;">Total Payments</h6>
-            <h2 class="page-title">{{ total_payments }}</h2>
-        </div>
-    </div>
+<!-- Header -->
+<div style="margin-bottom:2rem;">
+  <h2 style="font-family:'Noto Serif',serif;font-size:1.8rem;color:#1F3A44;margin:0;">Reports & Statistics</h2>
+  <p style="color:#C6A75E;margin:.3rem 0 0;">Overview of hotel performance</p>
 </div>
 
-<!-- Stats Cards Row 2 -->
-<div class="row mb-4">
-    <div class="col-md-4">
-        <div class="card p-4 text-center">
-            <h6 style="color: #C6A75E;">Occupied Rooms</h6>
-            <h2 style="color: #dc3545; font-weight:700;">{{ occupied_rooms }}</h2>
-        </div>
+<!-- Stats Row 1 -->
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;">
+
+  <div style="background:white;padding:2rem;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);text-align:center;border-top:4px solid #1F3A44;">
+    <p style="font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:#C6A75E;font-weight:700;margin:0 0 .5rem;">Total Guests</p>
+    <h2 style="font-family:'Noto Serif',serif;font-size:3rem;color:#1F3A44;margin:0;">{{ total_guests }}</h2>
+    <p style="font-size:.8rem;color:#4f453e;margin:.5rem 0 0;">👥 Registered guests</p>
+  </div>
+
+  <div style="background:white;padding:2rem;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);text-align:center;border-top:4px solid #C6A75E;">
+    <p style="font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:#C6A75E;font-weight:700;margin:0 0 .5rem;">Total Rooms</p>
+    <h2 style="font-family:'Noto Serif',serif;font-size:3rem;color:#1F3A44;margin:0;">{{ total_rooms }}</h2>
+    <p style="font-size:.8rem;color:#4f453e;margin:.5rem 0 0;">🏨 Hotel rooms</p>
+  </div>
+
+  <div style="background:white;padding:2rem;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);text-align:center;border-top:4px solid #8b4c11;">
+    <p style="font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:#C6A75E;font-weight:700;margin:0 0 .5rem;">Total Payments</p>
+    <h2 style="font-family:'Noto Serif',serif;font-size:3rem;color:#1F3A44;margin:0;">{{ total_payments }}</h2>
+    <p style="font-size:.8rem;color:#4f453e;margin:.5rem 0 0;">💳 Transactions</p>
+  </div>
+
+</div>
+
+<!-- Stats Row 2 -->
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;margin-bottom:2rem;">
+
+  <div style="background:white;padding:2rem;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);text-align:center;border-top:4px solid #dc3545;">
+    <p style="font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:#C6A75E;font-weight:700;margin:0 0 .5rem;">Occupied Rooms</p>
+    <h2 style="font-family:'Noto Serif',serif;font-size:3rem;color:#dc3545;margin:0;">{{ occupied_rooms }}</h2>
+    <p style="font-size:.8rem;color:#4f453e;margin:.5rem 0 0;">🔴 Currently occupied</p>
+  </div>
+
+  <div style="background:white;padding:2rem;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);text-align:center;border-top:4px solid #28a745;">
+    <p style="font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:#C6A75E;font-weight:700;margin:0 0 .5rem;">Available Rooms</p>
+    <h2 style="font-family:'Noto Serif',serif;font-size:3rem;color:#28a745;margin:0;">{{ not_occupied_rooms }}</h2>
+    <p style="font-size:.8rem;color:#4f453e;margin:.5rem 0 0;">🟢 Ready for guests</p>
+  </div>
+
+  <div style="background:linear-gradient(135deg,#1F3A44,#2d5568);padding:2rem;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);text-align:center;">
+    <p style="font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:#C6A75E;font-weight:700;margin:0 0 .5rem;">Total Revenue</p>
+    <h2 style="font-family:'Noto Serif',serif;font-size:2rem;color:white;margin:0;">UGX {{ total_revenue|floatformat:0 }}</h2>
+    <p style="font-size:.8rem;color:#ffdcc4;margin:.5rem 0 0;">💰 Total collected</p>
+  </div>
+
+</div>
+
+<!-- Occupancy Summary -->
+<div style="background:white;padding:2rem;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);">
+  <h3 style="font-family:'Noto Serif',serif;font-size:1.2rem;color:#1F3A44;margin:0 0 1.5rem;">Room Occupancy Summary</h3>
+  <div style="display:flex;gap:2rem;align-items:center;">
+
+    <div style="text-align:center;flex:1;padding:1.5rem;background:#ffdad6;border-radius:12px;">
+      <h3 style="font-family:'Noto Serif',serif;font-size:2rem;color:#dc3545;margin:0;">{{ occupied_rooms }}</h3>
+      <p style="font-size:.8rem;color:#93000a;font-weight:700;margin:.5rem 0 0;text-transform:uppercase;letter-spacing:.05em;">Occupied</p>
     </div>
-    <div class="col-md-4">
-        <div class="card p-4 text-center">
-            <h6 style="color: #C6A75E;">Available Rooms</h6>
-            <h2 style="color: #1F3A44; font-weight:700;">{{ not_occupied_rooms }}</h2>
-        </div>
+
+    <div style="font-size:2rem;color:#C6A75E;">vs</div>
+
+    <div style="text-align:center;flex:1;padding:1.5rem;background:#d4edda;border-radius:12px;">
+      <h3 style="font-family:'Noto Serif',serif;font-size:2rem;color:#28a745;margin:0;">{{ not_occupied_rooms }}</h3>
+      <p style="font-size:.8rem;color:#155724;font-weight:700;margin:.5rem 0 0;text-transform:uppercase;letter-spacing:.05em;">Available</p>
     </div>
-    <div class="col-md-4">
-        <div class="card p-4 text-center">
-            <h6 style="color: #C6A75E;">Total Revenue</h6>
-            <h2 style="color: #1F3A44; font-weight:700;">
-                UGX {{ total_revenue|floatformat:0 }}
-            </h2>
-        </div>
+
+    <div style="font-size:2rem;color:#C6A75E;">of</div>
+
+    <div style="text-align:center;flex:1;padding:1.5rem;background:#f3f3f3;border-radius:12px;">
+      <h3 style="font-family:'Noto Serif',serif;font-size:2rem;color:#1F3A44;margin:0;">{{ total_rooms }}</h3>
+      <p style="font-size:.8rem;color:#4f453e;font-weight:700;margin:.5rem 0 0;text-transform:uppercase;letter-spacing:.05em;">Total Rooms</p>
     </div>
+
+  </div>
 </div>
 
 {% endblock %}

@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if form.instance.pk %}Edit Room{% else %}Add Room{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<!-- Page Header -->
+<div class="mb-4">
+    <h2 class="page-title">
+        {% if form.instance.pk %}Edit Room{% else %}Add New Room{% endif %}
+    </h2>
+    <p style="color: #C6A75E;">
+        {% if form.instance.pk %}Update room details below{% else %}Fill in the details to add a new room{% endif %}
+    </p>
+</div>
+
+<!-- Form Card -->
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header text-white" style="background-color: #1F3A44;">
+                <h5 class="mb-0">
+                    {% if form.instance.pk %}✏️ Edit Room{% else %}➕ Add New Room{% endif %}
+                </h5>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <!-- Room Number -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold" style="color: #1F3A44;">Room Number</label>
+                        {{ form.room_number }}
+                        {% if form.room_number.errors %}
+                            {% for error in form.room_number.errors %}
+                                <div class="text-danger small mt-1">⚠️ {{ error }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <!-- Room Category -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold" style="color: #1F3A44;">Room Category</label>
+                        {{ form.room_category }}
+                        {% if form.room_category.errors %}
+                            {% for error in form.room_category.errors %}
+                                <div class="text-danger small mt-1">⚠️ {{ error }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <!-- Room Status -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold" style="color: #1F3A44;">Room Status</label>
+                        {{ form.room_status }}
+                        {% if form.room_status.errors %}
+                            {% for error in form.room_status.errors %}
+                                <div class="text-danger small mt-1">⚠️ {{ error }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary px-4">
+                            {% if form.instance.pk %}Save Changes{% else %}Add Room{% endif %}
+                        </button>
+                        <a href="{% url 'room_list' %}" class="btn px-4"
+                           style="background-color: #C6A75E; color: white;">
+                            Cancel
+                        </a>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

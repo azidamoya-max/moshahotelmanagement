@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Room{% endblock %}
+
+{% block content %}
+
+<div class="mb-4">
+    <h2 class="page-title">Delete Room</h2>
+    <p style="color: #C6A75E;">This action cannot be undone</p>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header text-white" style="background-color: #1F3A44;">
+                <h5 class="mb-0">⚠️ Confirm Deletion</h5>
+            </div>
+            <div class="card-body p-4 text-center">
+
+                <p class="fs-5" style="color: #2E2E2E;">
+                    Are you sure you want to delete:
+                </p>
+
+                <h4 class="fw-bold my-3" style="color: #1F3A44;">
+                    Room {{ room.room_number }} - {{ room.get_room_category_display }}
+                </h4>
+
+                <p class="text-muted small mb-4">
+                    Status: {{ room.get_room_status_displa
