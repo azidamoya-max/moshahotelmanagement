@@ -1,0 +1,116 @@
+{% load crispy_forms_tags %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Login - Parkease</title>
+	<!-- Tailwind CSS -->
+	<link href="{% static 'css/output.css' %}" rel="stylesheet">
+	<!-- Font Awesome -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+	<style>
+		/* Background gradient */
+		body {
+			background: linear-gradient(to right, #a6aebf, #c5d3e8);
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			margin: 0;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			min-height: 100vh;
+		}
+
+		/* Form container */
+		.right-section {
+			width: 100%;
+			max-width: 400px;
+			background: #ffffff;
+			border-radius: 8px;
+			padding: 30px;
+			border: 1px solid #ccc;
+		}
+
+		/* Form styling */
+		form {
+			width: 100%;
+			padding: 0;
+		}
+
+		.form-title {
+			font-size: 1.5rem;
+			font-weight: bold;
+			text-align: center;
+			margin-bottom: 20px;
+			color: #3a6073;
+		}
+
+		.form-control {
+			width: 100%;
+			padding: 12px;
+			margin-bottom: 15px;
+			border: 1px solid #ccc;
+			border-radius: 6px;
+			font-size: 1rem;
+			background-color: #f9f9f9;
+		}
+
+		.form-control:focus {
+			border-color: #3a6073;
+			outline: none;
+		}
+
+		/* Submit button */
+		.btn-submit {
+			width: 100%;
+			padding: 12px;
+			background: #3a6073;
+			color: #ffffff;
+			font-size: 1rem;
+			border: none;
+			border-radius: 6px;
+			cursor: pointer;
+			transition: background 0.3s;
+		}
+
+		.btn-submit:hover {
+			background: #16222a;
+		}
+
+		/* Footer styling */
+		footer {
+			width: 100%;
+			text-align: center;
+			background-color: #16222a;
+			color: #ffffff;
+			font-size: 0.9rem;
+			padding: 10px 0;
+			position: fixed;
+			bottom: 0;
+			left: 0;
+		}
+	</style>
+</head>
+
+<body>
+	<!-- Centered Form Container -->
+	<div class="right-section">
+		<form method="post">
+			{% csrf_token %}
+			<div class="form-title">Requisition Approval</div>
+			{{ form|crispy }}
+			<button type="submit" class="btn-submit">Approve</button>
+		</form>
+	</div>
+
+	<!-- Footer -->
+	<footer>
+		&copy; 2026 ParkEase. All rights reserved. Developed by Azida
+	</footer>
+</body>
+
+</html>

@@ -1,0 +1,106 @@
+from django.contrib.auth.forms import UserCreationForm
+from django import forms
+from .models import *
+from django.forms.utils import ValidationError
+from django.db import transaction
+from django.forms import ModelForm
+
+# ─── User creation form ────────────────────────────────────────────────────────
+
+class UserCreation(UserCreationForm):
+    class Meta:
+        model = Userprofile
+        fields = '__all__'
+    def save(self, commit=True):
+        user = super(UserCreation, self).save(commit=False)
+        if commit:
+            user.is_active = True
+            user.is_staff = True
+            user.save()
+        return user
+
+# ─── Car forms ─────────────────────────────────────────────────────────────────
+
+class AddcarForm(ModelForm):
+    slot = forms.ModelChoiceField(
+        queryset=ParkingSlot.objects.filter(status='FREE').order_by('number'),
+        empty_label='-- Select Slot --',
+        label='Parking Slot',
+        required=True
+    )
+    class Meta:
+        model = Car
+        fields = ['car_brand', 'cparktype', 'customer', 'customerv',
+                  'customerNiN', 'phone', 'cnumberplate', 'color', 'fee', 'slot']
+        labels = {
+            'car_brand': 'Car Brand / Model',
+            'customer': 'Driver First Name',
+            'customerv': 'Driver Other Name',
+            'customerNiN': 'Customer NIN',
+            'cparktype': 'Vehicle Type',
+            'phone': 'Phone Number',
+            'cnumberplate': 'Car Number Plate',
+            'color': 'Color of Car',
+            'fee': 'Parking Fee (UGX)',
+        }
+
+# ─── Car sign-out form ─────────────────────────────────────────────────────────
+
+class CarSignOutForm(ModelForm):
+    class Meta:
+        model = Car
+        fields = ['cparkv', 'cparkpaymode']
+        labels = {
+            'cparkv': 'Have you verified the entry slip?',
+            'cparkpaymode': 'Payment Mode',
+        }
+
+# ─── Tyre form ─────────────────────────────────────────────────────────────────
+
+class AddtyreForm(ModelForm):
+    class Meta:
+        model = Tyre
+        # Field order: compulsory first, optional last
+        fields = ['tyre_brand', 'price', 'qty', 'size', 'customer',
+                  'payment_mode', 'decription', 'serial']
+        labels = {
+            'tyre_brand': 'Tyre Brand',
+            'price': 'Tyre Price',
+            'qty': 'Item Quantity',
+            'size': 'Tyre Size',
+            'customer': 'Customer Name',
+            'payment_mode': 'Payment Mode',
+            'decription': 'Any Other Details (optional)',
+            'serial': 'Serial Number (optional)',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Compulsory fields
+        self.fields['tyre_brand'].required = True
+        self.fields['qty'].required = True
+        self.fields['size'].required = True
+        self.fields['customer'].required = True
+        self.fields['payment_mode'].required = True
+        # Optional fields
+        self.fields['decription'].required = False
+        self.fields['serial'].required = False
+
+    def clean_size(self):
+        # Auto-correct backslashes to forward slashes in tyre size
+        size = self.cleaned_data.get('size', '')
+        return size.replace('\\', '/')
+
+# ─── Battery form ──────────────────────────────────────────────────────────────
+
+class AddbatteryForm(ModelForm):
+    class Meta:
+        model = Battery
+        fields = '__all__'
+
+# ─── General requisition form ──────────────────────────────────────────────────
+
+class RequiForm(ModelForm):
+    class Meta:
+        model = Car
+        fields = '__all__'

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ParkEase | Manager Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #0d1117;
+            --card: #161b22;
+            --card2: #1f2937;
+            --gold: #f5a623;
+            --blue: #4a9eff;
+            --green: #27c93f;
+            --red: #ff6b6b;
+            --purple: #bf5af2;
+            --teal: #00d4aa;
+            --text: #e6edf3;
+            --muted: #8b949e;
+            --border: #30363d;
+        }
+        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; }
+
+        nav {
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-brand { display: flex; align-items: center; gap: 0.5rem; font-size: 1.3rem; font-weight: 700; color: var(--gold); }
+        .nav-brand small { color: var(--muted); font-size: 0.85rem; font-weight: 400; margin-left: 0.25rem; }
+        .nav-right { display: flex; align-items: center; gap: 1rem; }
+        .avatar {
+            width: 38px; height: 38px;
+            background: linear-gradient(135deg, var(--gold), #c77d00);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; color: #000; font-size: 0.9rem;
+        }
+        .nav-username { color: var(--muted); font-size: 0.9rem; }
+        .btn-logout {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 0.4rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .btn-logout:hover { border-color: var(--red); color: var(--red); }
+
+        .hero {
+            background: linear-gradient(135deg, #1c2a4a 0%, #0d1117 70%);
+            border-bottom: 1px solid var(--border);
+            padding: 2.5rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::after {
+            content: '🅿';
+            position: absolute;
+            right: 3rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 8rem;
+            opacity: 0.04;
+        }
+        .role-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(245,166,35,0.12);
+            border: 1px solid rgba(245,166,35,0.3);
+            color: var(--gold);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+        .hero h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.3rem; }
+        .hero h1 span { color: var(--gold); }
+        .hero p { color: var(--muted); font-size: 0.95rem; }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 0;
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+        }
+        .stat-item {
+            padding: 1.25rem 1rem;
+            text-align: center;
+            border-right: 1px solid var(--border);
+            transition: background 0.2s;
+        }
+        .stat-item:last-child { border-right: none; }
+        .stat-item:hover { background: var(--card2); }
+        .stat-number { font-size: 2rem; font-weight: 700; line-height: 1; }
+        .stat-label { font-size: 0.72rem; color: var(--muted); margin-top: 0.3rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+        .main { padding: 2rem; max-width: 1200px; margin: 0 auto; }
+        .section-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+            margin: 2rem 0 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 1rem; }
+
+        .action-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .action-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+        .action-card:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,0.5); }
+        .card-icon {
+            width: 48px; height: 48px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+        }
+        .card-title { font-size: 0.95rem; font-weight: 600; }
+        .card-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+        .card-arrow { color: var(--muted); font-size: 1rem; margin-top: auto; align-self: flex-end; transition: color 0.2s; }
+
+        .c-gold::before { background: var(--gold); }
+        .c-gold .card-icon { background: rgba(245,166,35,0.12); }
+        .c-gold:hover .card-arrow { color: var(--gold); }
+        .c-gold:hover { border-color: rgba(245,166,35,0.3); }
+
+        .c-blue::before { background: var(--blue); }
+        .c-blue .card-icon { background: rgba(74,158,255,0.12); }
+        .c-blue:hover .card-arrow { color: var(--blue); }
+        .c-blue:hover { border-color: rgba(74,158,255,0.3); }
+
+        .c-green::before { background: var(--green); }
+        .c-green .card-icon { background: rgba(39,201,63,0.12); }
+        .c-green:hover .card-arrow { color: var(--green); }
+        .c-green:hover { border-color: rgba(39,201,63,0.3); }
+
+        .c-purple::before { background: var(--purple); }
+        .c-purple .card-icon { background: rgba(191,90,242,0.12); }
+        .c-purple:hover .card-arrow { color: var(--purple); }
+        .c-purple:hover { border-color: rgba(191,90,242,0.3); }
+
+        .c-teal::before { background: var(--teal); }
+        .c-teal .card-icon { background: rgba(0,212,170,0.12); }
+        .c-teal:hover .card-arrow { color: var(--teal); }
+        .c-teal:hover { border-color: rgba(0,212,170,0.3); }
+
+        .c-red::before { background: var(--red); }
+        .c-red .card-icon { background: rgba(255,107,107,0.12); }
+        .c-red:hover .card-arrow { color: var(--red); }
+        .c-red:hover { border-color: rgba(255,107,107,0.3); }
+
+        .messages { padding: 1rem 2rem 0; }
+        .alert { padding: 0.75rem 1rem; border-radius: 8px; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .alert-success { background: rgba(39,201,63,0.1); border: 1px solid rgba(39,201,63,0.25); color: var(--green); }
+
+        @media (max-width: 768px) {
+            .stats-bar { grid-template-columns: repeat(3, 1fr); }
+            .hero h1 { font-size: 1.4rem; }
+            nav { padding: 0 1rem; }
+            .main { padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="nav-brand">🅿 ParkEase <small>/ System Manager</small></div>
+    <div class="nav-right">
+        <span class="nav-username">{{ request.user.username }}</span>
+        <div class="avatar">{{ request.user.username|slice:":2"|upper }}</div>
+        <a href="/logout/" class="btn-logout">Sign Out</a>
+    </div>
+</nav>
+
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}
+    <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="hero">
+    <div class="role-badge">⭐ System Manager</div>
+    <h1>Welcome back, <span>{{ request.user.username }}</span></h1>
+    <p>Here's Parkville's activity summary for today</p>
+</div>
+
+<div class="stats-bar">
+    <div class="stat-item">
+        <div class="stat-number" style="color:var(--blue)">{{ car_count }}</div>
+        <div class="stat-label">🚗 Cars</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number" style="color:var(--green)">{{ battery_count }}</div>
+        <div class="stat-label">🔋 Batteries</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number" style="color:var(--gold)">{{ tyre_count }}</div>
+        <div class="stat-label">🔧 Tyres</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number" style="color:var(--teal)">{{ pressure_count }}</div>
+        <div class="stat-label">💨 Pressure</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number" style="color:var(--purple)">{{ puncture_count }}</div>
+        <div class="stat-label">🔄 Punctures</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number" style="color:var(--red)">{{ valve_count }}</div>
+        <div class="stat-label">🔩 Valves</div>
+    </div>
+</div>
+
+<div class="main">
+
+    <p class="section-label">📊 Reports & Analytics</p>
+    <div class="card-grid">
+        <a href="/reports/" class="action-card c-gold">
+            <div class="card-icon">📊</div>
+            <div class="card-title">Revenue Reports</div>
+            <div class="card-desc">View daily, monthly revenue across all sections with date filters</div>
+            <span class="card-arrow">→</span>
+        </a>
+        <a href="/calendar/" class="action-card c-blue">
+            <div class="card-icon">📅</div>
+            <div class="card-title">Calendar Records</div>
+            <div class="card-desc">Browse all transactions by date — every department</div>
+            <span class="card-arrow">→</span>
+        </a>
+        <a href="/director/" class="action-card c-teal">
+            <div class="card-icon">🖥️</div>
+            <div class="card-title">Full Dashboard</div>
+            <div class="card-desc">Complete vehicle list with all filters and car records</div>
+            <span class="card-arrow">→</span>
+        </a>
+    </div>
+
+    <p class="section-label">🚗 Parking Section</p>
+    <div class="card-grid">
+        <a href="/dashboard4/" class="action-card c-blue">
+            <div class="card-icon">🚗</div>
+            <div class="card-title">All Vehicle Records</div>
+            <div class="card-desc">View and manage all registered vehicles at Parkville</div>
+            <span class="card-arrow">→</span>
+        </a>
+    </div>
+
+    <p class="section-label">🔧 Tyre & 🔋 Battery Sections</p>
+    <div class="card-grid">
+        <a href="/alltyre/" class="action-card c-gold">
+            <div class="card-icon">🔧</div>
+            <div class="card-title">All Tyre Records</div>
+            <div class="card-desc">View all tyre clinic transactions including valves, punctures and pressure</div>
+            <span class="card-arrow">→</span>
+        </a>
+        <a href="/allbattery/" class="action-card c-green">
+            <div class="card-icon">🔋</div>
+            <div class="card-title">All Battery Records</div>
+            <div class="card-desc">View all battery hire and sales transactions</div>
+            <span class="card-arrow">→</span>
+        </a>
+    </div>
+
+    <p class="section-label">⚙️ System Administration</p>
+    <div class="card-grid">
+        <a href="/admin/" class="action-card c-purple">
+            <div class="card-icon">👥</div>
+            <div class="card-title">Manage Users</div>
+            <div class="card-desc">Add, edit or deactivate system users and assign roles</div>
+            <span class="card-arrow">→</span>
+        </a>
+        <a href="/signup/" class="action-card c-red">
+            <div class="card-icon">➕</div>
+            <div class="card-title">Register New User</div>
+            <div class="card-desc">Create accounts for new parking or service attendants</div>
+            <span class="card-arrow">→</span>
+        </a>
+    </div>
+
+</div>
+
+<footer style="background-color: #142a68; color: #ffffff; text-align: center; padding: 16px; margin-top: auto; font-size: 0.875rem; width: 100%;">
+    &copy; 2026 ParkEase. All rights reserved. Developed by Aisha.
+</footer>
+</body>
+</html>

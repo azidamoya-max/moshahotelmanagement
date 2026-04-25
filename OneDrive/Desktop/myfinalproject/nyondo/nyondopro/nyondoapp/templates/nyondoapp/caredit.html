@@ -1,0 +1,142 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Sign-Out | ParkEase</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: "Poppins", sans-serif; background: #eaecf5; min-height: 100vh; display: flex; flex-direction: column; position: relative; overflow-x: hidden; }
+        .navbar { background-color: #142a68; padding: 14px 28px; display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 10; }
+        .navbar-brand { color: white; font-size: 1.2rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+        .navbar-nav { display: flex; gap: 1.5rem; list-style: none; }
+        .nav-link { color: rgba(255,255,255,0.85); text-decoration: none; font-weight: 500; font-size: 0.9rem; }
+        .nav-link:hover { color: white; }
+        .blob { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; }
+        .container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 3rem 1rem; position: relative; z-index: 1; }
+        .form-box { background: white; border-radius: 12px; overflow: hidden; width: 100%; max-width: 520px; box-shadow: 0 4px 24px rgba(26,36,89,0.10); }
+        .form-header { background: #142a68; padding: 1.5rem 2rem; text-align: center; }
+        .form-header p { font-size: 0.72rem; letter-spacing: 2px; text-transform: uppercase; color: #a0b4d6; margin-bottom: 6px; }
+        .form-header h1 { font-size: 1.3rem; font-weight: 700; color: white; }
+        .form-body { padding: 2rem; }
+        .car-info { background: #eaecf5; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; font-size: 0.82rem; }
+        .car-info h3 { color: #142a68; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.6rem; text-transform: uppercase; }
+        .car-info-row { display: flex; justify-content: space-between; margin-bottom: 0.35rem; }
+        .car-info-row span:first-child { color: #6b7280; }
+        .car-info-row span:last-child { font-weight: 600; color: #1e2a5e; }
+        .duration-badge { background: #fef3c7; color: #92400e; padding: 6px 12px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; display: inline-block; margin-top: 0.5rem; }
+        .form-group { margin-bottom: 1.1rem; }
+        label { display: block; font-size: 0.82rem; color: #374151; margin-bottom: 0.35rem; font-weight: 600; }
+        select { width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.9rem; font-family: inherit; background: white; color: #1e2a5e; }
+        select:focus { outline: none; border-color: #142a68; }
+        .btn-submit { width: 100%; padding: 12px; background-color: #142a68; border: none; border-radius: 8px; color: white; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 1rem; transition: background 0.2s; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-submit:hover { background-color: #0f1e4a; }
+        .alert-success { background: #d1fae5; border: 1px solid #a7f3d0; color: #065f46; padding: 0.85rem 1rem; border-radius: 8px; margin-bottom: 1rem; font-weight: 600; text-align: center; }
+        footer { background-color: #142a68; padding: 12px; text-align: center; color: rgba(255,255,255,0.7); font-size: 0.85rem; position: relative; z-index: 10; }
+        @keyframes floatA { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(18px,16px) scale(1.07); } }
+        @keyframes floatB { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-14px,-12px) scale(1.09); } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.08; } 50% { transform: scale(1.2); opacity: 0.15; } }
+    </style>
+</head>
+<body>
+
+    <!-- Background blobs -->
+    <div class="blob" style="width:220px;height:220px;background:radial-gradient(circle,rgba(180,160,220,0.25),rgba(160,140,210,0.08));top:25%;left:-170px;animation:floatA 7s ease-in-out infinite;"></div>
+    <div class="blob" style="width:180px;height:180px;background:radial-gradient(circle,rgba(160,140,210,0.22),rgba(140,120,200,0.07));top:42%;left:-145px;animation:floatB 9s ease-in-out infinite;"></div>
+    <div class="blob" style="width:220px;height:220px;background:radial-gradient(circle,rgba(180,160,220,0.25),rgba(160,140,210,0.08));top:25%;right:-170px;animation:floatA 7s ease-in-out infinite;"></div>
+    <div class="blob" style="width:180px;height:180px;background:radial-gradient(circle,rgba(160,140,210,0.22),rgba(140,120,200,0.07));top:42%;right:-145px;animation:floatB 9s ease-in-out infinite;"></div>
+
+    <nav class="navbar">
+        <div class="navbar-brand">ParkEase Resources</div>
+        <ul class="navbar-nav">
+            {% if user.is_authenticated %}
+            <li><a class="nav-link" href="/allcars/">ALL CAR ENTRIES</a></li>
+            <li><a class="nav-link" href="/logout/">LOGOUT</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="form-box">
+
+            <div class="form-header">
+                <p>ParkEase &nbsp;|&nbsp; Car Checkout</p>
+                <h1>🚗 Car Sign-Out</h1>
+            </div>
+
+            <div class="form-body">
+
+                {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert-success">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+
+                <!-- Car details summary -->
+                <div class="car-info">
+                    <h3>Car Details</h3>
+                    <div class="car-info-row">
+                        <span>Reference</span>
+                        <span>PKE-{{ car.id|stringformat:"04d" }}</span>
+                    </div>
+                    <div class="car-info-row">
+                        <span>Number Plate</span>
+                        <span>{{ car.cnumberplate }}</span>
+                    </div>
+                    <div class="car-info-row">
+                        <span>Car Brand</span>
+                        <span>{{ car.car_brand }}</span>
+                    </div>
+                    <div class="car-info-row">
+                        <span>Driver</span>
+                        <span>{{ car.customer }} {{ car.customerv }}</span>
+                    </div>
+                    <div class="car-info-row">
+                        <span>Slot</span>
+                        <span>Slot {{ car.slot.number }}</span>
+                    </div>
+                    <div class="car-info-row">
+                        <span>Arrival Time</span>
+                        <span>{{ car.created_at|date:"d M Y, H:i" }}</span>
+                    </div>
+                    <div class="car-info-row">
+                        <span>Fee (UGX)</span>
+                        <span>{{ car.fee }}</span>
+                    </div>
+                    {% if duration %}
+                    <span class="duration-badge">⏱ Time parked: {{ duration }}</span>
+                    {% endif %}
+                </div>
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        <label>Have you verified the entry slip? *</label>
+                        <select name="cparkv" required>
+                            <option value="NO">NO</option>
+                            <option value="YES">YES</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Payment Mode *</label>
+                        <select name="cparkpaymode" required>
+                            <option value="CASH">Cash</option>
+                            <option value="MM">Mobile Money</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn-submit">✅ Sign Out & Print Receipt</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <footer>© 2026 ParkEase. All rights reserved. Developed by Aisha.</footer>
+
+</body>
+</html>

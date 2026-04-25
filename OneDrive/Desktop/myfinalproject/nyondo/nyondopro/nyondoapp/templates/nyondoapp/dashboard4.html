@@ -1,0 +1,198 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Entry | ParkEase</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: "Poppins", sans-serif; background: #eaecf5; min-height: 100vh; display: flex; flex-direction: column; position: relative; overflow-x: hidden; }
+        .navbar { background-color: #142a68; padding: 14px 28px; display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 10; }
+        .navbar-brand { color: white; font-size: 1.2rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+        .navbar-nav { display: flex; gap: 1.5rem; list-style: none; }
+        .nav-link { color: rgba(255,255,255,0.85); text-decoration: none; font-weight: 500; font-size: 0.9rem; }
+        .nav-link:hover { color: white; }
+        .blob { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; }
+        .container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 3rem 1rem; position: relative; z-index: 1; }
+        .form-box { background: white; border-radius: 12px; padding: 2.5rem; box-shadow: 0 4px 24px rgba(26,36,89,0.10); width: 100%; max-width: 600px; max-height: 85vh; overflow-y: auto; }
+        .form-box h2 { text-align: center; color: #142a68; font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .slot-counter { display: flex; gap: 1rem; justify-content: center; margin-bottom: 1.5rem; }
+        .slot-badge { padding: 6px 14px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
+        .slot-free { background: #d1fae5; color: #065f46; }
+        .slot-occupied { background: #fee2e2; color: #991b1b; }
+        .slot-full { background: #fee2e2; color: #991b1b; text-align: center; padding: 10px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; margin-bottom: 1rem; }
+        .form-group { margin-bottom: 1.1rem; }
+        label { display: block; font-size: 0.82rem; color: #374151; margin-bottom: 0.35rem; font-weight: 600; }
+        input[type="text"], input[type="number"], select {
+            width: 100%; padding: 10px 12px;
+            border: 1px solid #d1d5db; border-radius: 6px;
+            font-size: 0.9rem; font-family: inherit;
+            background: white; color: #1e2a5e;
+        }
+        input:focus, select:focus { outline: none; border-color: #142a68; }
+        input[name="fee"] { background: #eaecf5; font-weight: 700; color: #142a68; cursor: not-allowed; }
+        .btn-submit { width: 100%; padding: 12px; background-color: #142a68; border: none; border-radius: 8px; color: white; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 1rem; transition: background 0.2s; }
+        .btn-submit:hover { background-color: #0f1e4a; }
+        .btn-submit:disabled { background-color: #9ca3af; cursor: not-allowed; }
+        .alert-success { background: #d1fae5; border: 1px solid #a7f3d0; color: #065f46; padding: 0.85rem 1rem; border-radius: 8px; margin-bottom: 1rem; font-weight: 600; text-align: center; }
+        footer { background-color: #142a68; padding: 12px; text-align: center; color: rgba(255,255,255,0.7); font-size: 0.85rem; position: relative; z-index: 10; }
+        @keyframes floatA {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(18px, 16px) scale(1.07); }
+        }
+        @keyframes floatB {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-14px, -12px) scale(1.09); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.08; }
+            50% { transform: scale(1.2); opacity: 0.15; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background blobs -->
+    <div class="blob" style="width:220px;height:220px;background:radial-gradient(circle,rgba(180,160,220,0.25),rgba(160,140,210,0.08));top:25%;left:-170px;animation:floatA 7s ease-in-out infinite;"></div>
+    <div class="blob" style="width:180px;height:180px;background:radial-gradient(circle,rgba(160,140,210,0.22),rgba(140,120,200,0.07));top:42%;left:-145px;animation:floatB 9s ease-in-out infinite;"></div>
+    <div class="blob" style="width:160px;height:160px;background:radial-gradient(circle,rgba(140,180,230,0.20),rgba(120,160,220,0.06));top:58%;left:-130px;animation:pulse 6s ease-in-out infinite;"></div>
+    <div class="blob" style="width:220px;height:220px;background:radial-gradient(circle,rgba(180,160,220,0.25),rgba(160,140,210,0.08));top:25%;right:-170px;animation:floatA 7s ease-in-out infinite;"></div>
+    <div class="blob" style="width:180px;height:180px;background:radial-gradient(circle,rgba(160,140,210,0.22),rgba(140,120,200,0.07));top:42%;right:-145px;animation:floatB 9s ease-in-out infinite;"></div>
+    <div class="blob" style="width:160px;height:160px;background:radial-gradient(circle,rgba(140,210,220,0.20),rgba(120,190,210,0.06));top:58%;right:-130px;animation:pulse 6s ease-in-out infinite;"></div>
+
+    <nav class="navbar">
+        <div class="navbar-brand">ParkEase Resources</div>
+        <ul class="navbar-nav">
+            {% if user.is_authenticated %}
+            <li><a class="nav-link" href="/allcars/">ALL CAR ENTRIES</a></li>
+            <li><a class="nav-link" href="/logout/">LOGOUT</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="form-box">
+            <h2>🚗 Car Entry Form</h2>
+
+            <!-- Slot counter -->
+            <div class="slot-counter">
+                <span class="slot-badge slot-free">🟢 Free Slots: {{ free_slots }} / 50</span>
+                <span class="slot-badge slot-occupied">🔴 Occupied: {{ 50|add:"-"|add:free_slots }}</span>
+            </div>
+
+            {% if free_slots == 0 %}
+            <div class="slot-full">🚫 PARKING FULL — No slots available</div>
+            {% endif %}
+
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert-success">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label>Car Brand / Model *</label>
+                    <input type="text" name="car_brand" placeholder="e.g. Toyota RAV4" required {% if free_slots == 0 %}disabled{% endif %}>
+                </div>
+
+                <div class="form-group">
+                    <label>Vehicle Type *</label>
+                    <select name="cparktype" id="cparktype" required onchange="calculateFee()" {% if free_slots == 0 %}disabled{% endif %}>
+                        <option value="">-- Select Type --</option>
+                        <option value="TRUCK">Truck</option>
+                        <option value="PERSONAL CAR">Personal Car</option>
+                        <option value="TAXI">Taxi</option>
+                        <option value="COASTER">Coaster</option>
+                        <option value="BODA-BODA">Boda-boda</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Driver First Name *</label>
+                    <input type="text" name="customer" placeholder="e.g. John" required {% if free_slots == 0 %}disabled{% endif %}>
+                </div>
+
+                <div class="form-group">
+                    <label>Driver Other Name *</label>
+                    <input type="text" name="customerv" placeholder="e.g. Mukasa" required {% if free_slots == 0 %}disabled{% endif %}>
+                </div>
+
+                <div class="form-group">
+                    <label>Customer NIN *</label>
+                    <input type="text" name="customerNiN" placeholder="e.g. CM900123456XXXXX" required {% if free_slots == 0 %}disabled{% endif %}>
+                </div>
+
+                <div class="form-group">
+                    <label>Phone Number *</label>
+                    <input type="text" name="phone" placeholder="e.g. 0701234567" required {% if free_slots == 0 %}disabled{% endif %}>
+                </div>
+
+                <div class="form-group">
+                    <label>Car Number Plate *</label>
+                    <input type="text" name="cnumberplate" placeholder="e.g. UAA 123B" required {% if free_slots == 0 %}disabled{% endif %}>
+                </div>
+
+                <div class="form-group">
+                    <label>Color of Car *</label>
+                    <input type="text" name="color" placeholder="e.g. White" required {% if free_slots == 0 %}disabled{% endif %}>
+                </div>
+
+                <div class="form-group">
+                    <label>Parking Slot *</label>
+                    <select name="slot" required {% if free_slots == 0 %}disabled{% endif %}>
+                        <option value="">-- Select Slot --</option>
+                        {% for slot in form.slot.field.queryset %}
+                        <option value="{{ slot.pk }}">Slot {{ slot.number }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Time of Day *</label>
+                    <select name="time_of_day" id="time_of_day" required onchange="calculateFee()" {% if free_slots == 0 %}disabled{% endif %}>
+                        <option value="DAY">☀️ Day (6:00am – 6:59pm)</option>
+                        <option value="NIGHT">🌙 Night (7:00pm – 5:59am)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Parking Fee (UGX) — Auto-calculated</label>
+                    <input type="number" name="fee" id="fee" readonly placeholder="Select vehicle type above">
+                </div>
+
+                <button type="submit" class="btn-submit" {% if free_slots == 0 %}disabled{% endif %}>
+                    {% if free_slots == 0 %}PARKING FULL{% else %}REGISTER CAR{% endif %}
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <footer>© 2026 ParkEase. All rights reserved. Developed by Aisha.</footer>
+
+    <script>
+        window.onload = function() {
+            const hour = new Date().getHours();
+            document.getElementById('time_of_day').value = (hour >= 6 && hour < 19) ? 'DAY' : 'NIGHT';
+            calculateFee();
+        }
+        function calculateFee() {
+            const type = document.getElementById('cparktype').value;
+            const time = document.getElementById('time_of_day').value;
+            const fees = {
+                'TRUCK':        { DAY: 5000, NIGHT: 10000 },
+                'PERSONAL CAR': { DAY: 3000, NIGHT: 2000  },
+                'TAXI':         { DAY: 3000, NIGHT: 2000  },
+                'COASTER':      { DAY: 4000, NIGHT: 2000  },
+                'BODA-BODA':    { DAY: 2000, NIGHT: 2000  },
+            };
+            document.getElementById('fee').value = fees[type] ? fees[type][time] : '';
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Battery Receipt | ParkEase</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #eaecf5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+    }
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      opacity: 0.18;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .blob-1 { width: 340px; height: 340px; background: #142a68; top: -80px; left: -100px; }
+    .blob-2 { width: 260px; height: 260px; background: #7b8cde; bottom: 60px; right: -80px; }
+    nav {
+      background-color: #142a68;
+      padding: 16px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 10;
+    }
+    nav .brand { color: #fff; font-size: 1.1rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
+    nav a { color: #fff; text-decoration: none; font-size: 0.9rem; font-weight: 600; }
+    .page-content {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 60px 20px;
+      position: relative;
+      z-index: 1;
+    }
+    .receipt-card {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 8px 32px rgba(20, 42, 104, 0.12);
+      width: 100%;
+      max-width: 520px;
+      overflow: hidden;
+    }
+    .receipt-header {
+      background-color: #142a68;
+      color: #fff;
+      text-align: center;
+      padding: 24px 16px 18px;
+    }
+    .receipt-header .label {
+      font-size: 0.7rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0.8;
+      margin-bottom: 8px;
+    }
+    .receipt-header h2 {
+      font-size: 1.4rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+    .receipt-header p { font-size: 0.82rem; opacity: 0.85; }
+    .receipt-body { padding: 20px; }
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { background-color: #142a68; }
+    thead th {
+      color: #fff;
+      padding: 9px 10px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      text-align: center;
+    }
+    tbody td {
+      padding: 10px;
+      text-align: center;
+      font-size: 0.82rem;
+      color: #2c2c4a;
+      border-bottom: 1px solid #f0f2fb;
+    }
+    .total-row td {
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: #142a68;
+      padding-top: 14px;
+    }
+    .btn-row { display: flex; gap: 10px; margin-top: 18px; }
+    .btn-back {
+      padding: 9px 18px;
+      border: 2px solid #142a68;
+      color: #142a68;
+      background: transparent;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .btn-print {
+      padding: 9px 18px;
+      background: #142a68;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-print:hover { background: #0f1e4f; }
+
+    @media print {
+      @page { size: A6 portrait; margin: 8mm; }
+      body * { visibility: hidden; }
+      .thermal-receipt, .thermal-receipt * { visibility: visible; }
+      .thermal-receipt {
+        display: block !important;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+      }
+    }
+
+    .thermal-receipt {
+      display: none;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      color: #000;
+      width: 280px;
+      padding: 12px;
+      border: 1px dashed #000;
+      background: #fff;
+    }
+    .thermal-receipt .t-title { text-align: center; font-weight: bold; font-size: 14px; margin-bottom: 4px; }
+    .thermal-receipt .t-sub { text-align: center; font-size: 11px; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px dashed #000; }
+    .thermal-receipt .t-row { margin-bottom: 4px; font-size: 12px; }
+    .thermal-receipt .t-total { border-top: 1px dashed #000; padding-top: 8px; margin-top: 8px; font-size: 14px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <nav>
+    <div class="brand">ParkEase Resources</div>
+    <a href="{% url 'logout' %}">Logout</a>
+  </nav>
+
+  <div class="page-content">
+    <div class="receipt-card">
+
+      <div class="receipt-header">
+        <div class="label">ParkEase Battery Receipt &nbsp;|&nbsp; P.O Box</div>
+        <h2>Battery Item</h2>
+        <p>Brand: {{ qtdetails.batery_brand|title }}</p>
+        <p>Created At: {{ qtdetails.created_at }}</p>
+      </div>
+
+      <div class="receipt-body">
+        <table>
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Voltage</th>
+              <th>Model</th>
+              <th>Qty</th>
+              <th>Unit Price</th>
+              <th>Type</th>
+              <th>Payment</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{ qtdetails.customer }}</td>
+              <td>{{ qtdetails.voltage|default:"—" }}</td>
+              <td>{{ qtdetails.bmodel|default:"—" }}</td>
+              <td>{{ qtdetails.qty|default:"—" }}</td>
+              <td>{% if qtdetails.price %}{{ qtdetails.price.bprice }}{% else %}—{% endif %}</td>
+              <td>{{ qtdetails.transaction_type|default:"—" }}</td>
+              <td>{{ qtdetails.get_payment_mode_display|default:"—" }}</td>
+            </tr>
+            <tr class="total-row">
+              <td colspan="7">TOTAL AMOUNT: UGX {{ total }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="btn-row">
+          <a href="{% url 'allbattery' %}" class="btn-back">← Back</a>
+          <button type="button" class="btn-print" onclick="window.print()">🖨️ Print Receipt</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Thermal receipt — only visible when printing -->
+  <div class="thermal-receipt">
+    <div class="t-title">PARKEASE RESOURCES</div>
+    <div class="t-sub">
+      Battery Transaction Receipt<br>
+      {{ qtdetails.created_at|date:"d M Y H:i" }}
+    </div>
+    <div class="t-row">Customer: <strong>{{ qtdetails.customer }}</strong></div>
+    <div class="t-row">Brand: <strong>{{ qtdetails.batery_brand }}</strong></div>
+    <div class="t-row">Voltage: <strong>{{ qtdetails.voltage|default:"—" }}</strong></div>
+    <div class="t-row">Model: <strong>{{ qtdetails.bmodel|default:"—" }}</strong></div>
+    <div class="t-row">Qty: <strong>{{ qtdetails.qty|default:"—" }}</strong></div>
+    <div class="t-row">Type: <strong>{{ qtdetails.transaction_type|default:"—" }}</strong></div>
+    <div class="t-row">Payment: <strong>{{ qtdetails.get_payment_mode_display|default:"—" }}</strong></div>
+    <div class="t-total">TOTAL: UGX {{ total }}</div>
+  </div>
+
+  <footer style="background-color: #142a68; color: #ffffff; text-align: center; padding: 16px; margin-top: auto; font-size: 0.875rem; width: 100%;">
+      &copy; 2026 ParkEase. All rights reserved. Developed by Aisha.
+  </footer>
+</body>
+</html>

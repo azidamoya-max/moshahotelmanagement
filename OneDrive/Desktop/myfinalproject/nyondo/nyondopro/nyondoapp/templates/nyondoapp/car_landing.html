@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ParkEase | Car Attendant</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #0d1117;
+            --card: #161b22;
+            --card2: #1f2937;
+            --blue: #4a9eff;
+            --gold: #f5a623;
+            --green: #27c93f;
+            --red: #ff6b6b;
+            --orange: #ff9f43;
+            --text: #e6edf3;
+            --muted: #8b949e;
+            --border: #30363d;
+        }
+        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; }
+
+        nav {
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-brand { font-size: 1.3rem; font-weight: 700; color: var(--blue); }
+        .nav-brand small { color: var(--muted); font-size: 0.85rem; font-weight: 400; margin-left: 0.4rem; }
+        .nav-right { display: flex; align-items: center; gap: 1rem; }
+        .avatar {
+            width: 38px; height: 38px;
+            background: linear-gradient(135deg, var(--blue), #0051cc);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; color: #fff; font-size: 0.9rem;
+        }
+        .nav-username { color: var(--muted); font-size: 0.9rem; }
+        .btn-logout {
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 0.4rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            background: transparent;
+        }
+        .btn-logout:hover { border-color: var(--red); color: var(--red); }
+
+        .hero {
+            background: linear-gradient(135deg, #0f2040 0%, #0d1117 70%);
+            border-bottom: 1px solid var(--border);
+            padding: 2.5rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::after {
+            content: '🚗';
+            position: absolute; right: 3rem; top: 50%;
+            transform: translateY(-50%);
+            font-size: 8rem; opacity: 0.05;
+        }
+        .role-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(74,158,255,0.12);
+            border: 1px solid rgba(74,158,255,0.3);
+            color: var(--blue);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+        .hero h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.3rem; }
+        .hero h1 span { color: var(--blue); }
+        .hero p { color: var(--muted); font-size: 0.95rem; }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+        }
+        .stat-item {
+            padding: 1.25rem 1rem;
+            text-align: center;
+            border-right: 1px solid var(--border);
+        }
+        .stat-item:last-child { border-right: none; }
+        .stat-number { font-size: 2.2rem; font-weight: 700; line-height: 1; }
+        .stat-label { font-size: 0.72rem; color: var(--muted); margin-top: 0.3rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+        .main { padding: 2rem; max-width: 1000px; margin: 0 auto; }
+        .section-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+            margin: 2rem 0 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
+
+        .action-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .action-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+        .action-card:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,0.5); }
+        .card-icon { width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+        .card-title { font-size: 0.95rem; font-weight: 600; }
+        .card-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+        .card-arrow { color: var(--muted); font-size: 1rem; margin-top: auto; align-self: flex-end; transition: color 0.2s; }
+
+        .c-blue::before { background: var(--blue); }
+        .c-blue .card-icon { background: rgba(74,158,255,0.12); }
+        .c-blue:hover .card-arrow { color: var(--blue); }
+        .c-blue:hover { border-color: rgba(74,158,255,0.3); }
+
+        .c-green::before { background: var(--green); }
+        .c-green .card-icon { background: rgba(39,201,63,0.12); }
+        .c-green:hover .card-arrow { color: var(--green); }
+        .c-green:hover { border-color: rgba(39,201,63,0.3); }
+
+        .c-gold::before { background: var(--gold); }
+        .c-gold .card-icon { background: rgba(245,166,35,0.12); }
+        .c-gold:hover .card-arrow { color: var(--gold); }
+        .c-gold:hover { border-color: rgba(245,166,35,0.3); }
+
+        .c-orange::before { background: var(--orange); }
+        .c-orange .card-icon { background: rgba(255,159,67,0.12); }
+        .c-orange:hover .card-arrow { color: var(--orange); }
+        .c-orange:hover { border-color: rgba(255,159,67,0.3); }
+
+        /* Recent vehicles table */
+        .table-wrap {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .table-header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        table { width: 100%; border-collapse: collapse; }
+        th { padding: 0.6rem 1rem; text-align: left; font-size: 0.75rem; color: var(--muted); text-transform: uppercase; background: var(--card2); border-bottom: 1px solid var(--border); }
+        td { padding: 0.75rem 1rem; font-size: 0.85rem; border-bottom: 1px solid var(--border); }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+        .plate-badge {
+            background: rgba(74,158,255,0.12);
+            color: var(--blue);
+            border: 1px solid rgba(74,158,255,0.25);
+            padding: 0.2rem 0.6rem;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .status-taken { color: var(--red); font-size: 0.8rem; }
+        .status-available { color: var(--green); font-size: 0.8rem; }
+        .empty-state { padding: 2rem; text-align: center; color: var(--muted); font-size: 0.9rem; }
+
+        .messages { padding: 1rem 2rem 0; }
+        .alert { padding: 0.75rem 1rem; border-radius: 8px; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .alert-success { background: rgba(39,201,63,0.1); border: 1px solid rgba(39,201,63,0.25); color: var(--green); }
+
+        @media (max-width: 768px) {
+            .stats-bar { grid-template-columns: repeat(3, 1fr); }
+            nav { padding: 0 1rem; }
+            .main { padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="nav-brand">🅿 ParkEase <small>/ Car Attendant</small></div>
+    <div class="nav-right">
+        <span class="nav-username">{{ request.user.username }}</span>
+        <div class="avatar">{{ request.user.username|slice:":2"|upper }}</div>
+        <a href="/logout/" class="btn-logout">Sign Out</a>
+    </div>
+</nav>
+
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}
+    <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="hero">
+    <div class="role-badge">🚗 Parking Attendant</div>
+    <h1>Hello, <span>{{ request.user.username }}</span></h1>
+    <p>Manage vehicle arrivals, receipts and sign-outs at Parkville</p>
+</div>
+
+<div class="stats-bar">
+    <div class="stat-item">
+        <div class="stat-number" style="color:var(--blue)">{{ car_count }}</div>
+        <div class="stat-label">🚗 Vehicles Today</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number" style="color:var(--green)">{{ cars_taken }}</div>
+        <div class="stat-label">✅ Currently Parked</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number" style="color:var(--gold)">{{ cars_available }}</div>
+        <div class="stat-label">🚪 Signed Out</div>
+    </div>
+</div>
+
+<div class="main">
+
+    <p class="section-label">⚡ Quick Actions</p>
+    <div class="card-grid">
+        <a href="/addcar/" class="action-card c-blue">
+            <div class="card-icon">🚗</div>
+            <div class="card-title">Register Vehicle</div>
+            <div class="card-desc">Record a new vehicle arrival — capture plate, type, and issue a receipt</div>
+            <span class="card-arrow">→</span>
+        </a>
+        <a href="/dashboard4/" class="action-card c-green">
+            <div class="card-icon">📋</div>
+            <div class="card-title">All Vehicles</div>
+            <div class="card-desc">View the full list of registered vehicles and their parking status</div>
+            <span class="card-arrow">→</span>
+        </a>
+        <a href="/addcar/" class="action-card c-gold">
+            <div class="card-icon">✅</div>
+            <div class="card-title">Sign Out Vehicle</div>
+            <div class="card-desc">Process a vehicle departure — verify receipt and record sign-out details</div>
+            <span class="card-arrow">→</span>
+        </a>
+        <a href="/dashboard4/" class="action-card c-orange">
+            <div class="card-icon">🔍</div>
+            <div class="card-title">Search by Plate</div>
+            <div class="card-desc">Look up any vehicle by its number plate in the records</div>
+            <span class="card-arrow">→</span>
+        </a>
+    </div>
+
+    <p class="section-label">📋 Recent Vehicle Arrivals Today</p>
+    <div class="table-wrap">
+        {% if cars_today %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Number Plate</th>
+                    <th>Customer</th>
+                    <th>Type</th>
+                    <th>Color</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for car in cars_today %}
+                <tr>
+                    <td><span class="plate-badge">{{ car.cnumberplate }}</span></td>
+                    <td>{{ car.customer|default:"—" }}</td>
+                    <td>{{ car.cparktype|default:"—" }}</td>
+                    <td>{{ car.color|default:"—" }}</td>
+                    <td>
+                        {% if car.p_status == 'TAKEN' %}
+                        <span class="status-taken">● Parked</span>
+                        {% else %}
+                        <span class="status-available">● Out</span>
+                        {% endif %}
+                    </td>
+                    <td><a href="/dashboard4/{{ car.id }}" style="color:var(--blue);text-decoration:none;font-size:0.8rem;">View →</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">No vehicles registered yet today.</div>
+        {% endif %}
+    </div>
+
+</div>
+
+<footer style="background-color: #142a68; color: #ffffff; text-align: center; padding: 16px; margin-top: auto; font-size: 0.875rem; width: 100%;">
+    &copy; 2026 ParkEase. All rights reserved. Developed by Aisha.
+</footer>
+</body>
+</html>

@@ -1,0 +1,309 @@
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar Records | ParkEase</title>
+    <link href="{% static 'css/output.css' %}" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; background: #eaecf5; color: #2b3e40; display: flex; flex-direction: column; min-height: 100vh; }
+ 
+        .blob { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; }
+        .blob-1 { width:400px; height:400px; background:radial-gradient(circle,rgba(180,160,220,0.35),rgba(160,140,210,0.08)); top:-120px; left:-80px; }
+        .blob-2 { width:350px; height:350px; background:radial-gradient(circle,rgba(140,180,230,0.30),rgba(120,160,220,0.06)); top:-80px; right:100px; }
+        .blob-3 { width:350px; height:350px; background:radial-gradient(circle,rgba(180,160,230,0.30),rgba(160,140,220,0.06)); bottom:-100px; left:-80px; }
+        .blob-4 { width:250px; height:250px; background:radial-gradient(circle,rgba(140,210,220,0.28),rgba(120,190,210,0.05)); top:60px; right:-60px; }
+ 
+        .navbar { background:#142a68; padding:14px 36px; display:flex; align-items:center; position:relative; z-index:100; }
+        .navbar-brand { color:#fff; font-size:1.25rem; font-weight:800; text-transform:uppercase; letter-spacing:2.5px; }
+        .navbar-nav { margin-left:auto; display:flex; gap:1.5rem; list-style:none; align-items:center; }
+        .nav-link { color:#fff; font-weight:500; text-decoration:none; font-size:0.88rem; transition:color 0.2s; }
+        .nav-link:hover { color:#dfe4ea; }
+        .nav-link.active-nav { background:#4a6fa5; padding:6px 14px; border-radius:6px; }
+ 
+        .container { width:92%; max-width:1100px; margin:0 auto; padding:2rem 0 3rem; flex:1; position:relative; z-index:10; }
+ 
+        h1 { font-size:1.75rem; font-weight:800; color:#1a2459; margin-bottom:4px; }
+        .subtitle { color:#6b7280; font-size:0.92rem; margin-bottom:1.5rem; }
+ 
+        .back-link { display:inline-flex; align-items:center; gap:6px; color:#4a6fa5; text-decoration:none; font-size:0.88rem; font-weight:600; margin-bottom:1.2rem; }
+        .back-link:hover { color:#142a68; }
+ 
+        /* Date picker bar */
+        .date-picker { background:#fff; border-radius:10px; padding:16px 20px; display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:1.8rem; box-shadow:0 2px 8px rgba(26,36,89,0.07); }
+        .date-picker form { display:flex; align-items:center; gap:12px; border:none; padding:0; background:transparent; box-shadow:none; }
+        .date-picker label { font-size:0.85rem; font-weight:600; color:#374151; }
+        .date-picker input[type="date"] { border:1.5px solid #d1d5e8; border-radius:7px; padding:8px 14px; font-size:0.92rem; color:#1a2459; outline:none; font-family:'Poppins',sans-serif; }
+        .date-picker input[type="date"]:focus { border-color:#4a6fa5; }
+        .btn-go { background:#142a68; color:#fff; border:none; border-radius:7px; padding:9px 20px; font-size:0.88rem; font-weight:600; cursor:pointer; transition:background 0.2s; }
+        .btn-go:hover { background:#4a6fa5; }
+ 
+        /* Selected date display */
+        .selected-date-banner { background:#142a68; color:#fff; border-radius:10px; padding:14px 20px; margin-bottom:1.6rem; display:flex; align-items:center; justify-content:space-between; }
+        .selected-date-banner .date-label { font-size:1rem; font-weight:700; }
+        .selected-date-banner .date-sub { font-size:0.82rem; color:#a0b4d6; margin-top:2px; }
+ 
+        /* Section headers */
+        .section-title { font-size:0.88rem; font-weight:700; color:#1a2459; text-transform:uppercase; letter-spacing:1px; margin:1.6rem 0 0.8rem; display:flex; align-items:center; gap:8px; }
+        .section-count { background:#eef2ff; color:#4a6fa5; font-size:0.72rem; font-weight:700; padding:2px 10px; border-radius:20px; }
+ 
+        /* Table */
+        .table-wrapper { background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 2px 12px rgba(26,36,89,0.08); margin-bottom:1rem; }
+        .table { width:100%; border-collapse:collapse; }
+        .table thead tr { background:#142a68; }
+        .table th { color:#fff; padding:12px 16px; font-size:0.76rem; font-weight:700; text-align:center; letter-spacing:0.5px; text-transform:uppercase; }
+        .table tbody tr { border-bottom:1px solid #f0f1f8; transition:0.15s; }
+        .table tbody tr:last-child { border-bottom:none; }
+        .table tbody tr:hover { background:#f8faff; }
+        .table td { padding:11px 16px; font-size:0.85rem; color:#1f2937; text-align:center; }
+ 
+        /* Empty state */
+        .empty-day { text-align:center; padding:2.5rem; background:#fff; border-radius:12px; color:#9aa0c0; font-size:0.92rem; box-shadow:0 2px 12px rgba(26,36,89,0.08); }
+ 
+        /* Parking type badges */
+        .park-day    { background:#e0f2fe; color:#0369a1; font-size:0.70rem; font-weight:700; padding:2px 10px; border-radius:20px; display:inline-block; }
+        .park-night  { background:#ede9fe; color:#6d28d9; font-size:0.70rem; font-weight:700; padding:2px 10px; border-radius:20px; display:inline-block; }
+        .park-longer { background:#fef3c7; color:#92400e; font-size:0.70rem; font-weight:700; padding:2px 10px; border-radius:20px; display:inline-block; }
+        .park-repair { background:#fee2e2; color:#b91c1c; font-size:0.70rem; font-weight:700; padding:2px 10px; border-radius:20px; display:inline-block; }
+    </style>
+</head>
+<body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="blob blob-4"></div>
+ 
+    <nav class="navbar">
+        <div class="navbar-brand">PARKEASE RESOURCES</div>
+        <ul class="navbar-nav">
+            {% if user.is_authenticated %}
+            <li><a class="nav-link" href="/director">Parking</a></li>
+            <li><a class="nav-link" href="/allbattery">Battery Corner</a></li>
+            <li><a class="nav-link" href="/alltyre">Tyre Corner</a></li>
+            <li><a class="nav-link" href="/reports">📊 Reports</a></li>
+            <li><a class="nav-link active-nav" href="/calendar">📅 Calendar</a></li>
+            <li><a class="nav-link" href="/logout">Logout</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+ 
+    <div class="container">
+        <a href="/director" class="back-link">← Back to Dashboard</a>
+        <h1>📅 Calendar Records</h1>
+        <p class="subtitle">Select a date to view all services recorded on that day.</p>
+ 
+        <!-- Date Picker -->
+        <div class="date-picker">
+            <form method="GET" action="">
+                <label>Select Date:</label>
+                <input type="date" name="date" value="{{ selected_date_str }}">
+                <button type="submit" class="btn-go">View Records</button>
+            </form>
+        </div>
+ 
+        <!-- Selected Date Banner -->
+        <div class="selected-date-banner">
+            <div>
+                <div class="date-label">📅 {{ selected_date|date:"l, F j, Y" }}</div>
+                <div class="date-sub">Showing all service records for this date</div>
+            </div>
+        </div>
+ 
+        <!-- Cars -->
+        <div class="section-title">
+            🚗 Parking Records
+            <span class="section-count">{{ cars.count }}</span>
+        </div>
+        {% if cars %}
+        <div class="table-wrapper">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Car Name</th>
+                        <th>Number Plate</th>
+                        <th>Parking Type</th>
+                        <th>Time</th>
+                        <th>Fee</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for qt in cars %}
+                    <tr>
+                        <td>{{ qt.car_brand }}</td>
+                        <td>{{ qt.cnumberplate }}</td>
+                        <td>
+                            {% if qt.cparktype == 'DAY' %}<span class="park-day">DAY</span>
+                            {% elif qt.cparktype == 'NIGHT' %}<span class="park-night">NIGHT</span>
+                            {% elif qt.cparktype == 'LONGER' %}<span class="park-longer">LONGER</span>
+                            {% elif qt.cparktype == 'REPAIR' %}<span class="park-repair">REPAIR</span>
+                            {% else %}<span style="color:#9aa0c0;">—</span>{% endif %}
+                        </td>
+                        <td>{{ qt.created_at|time:"H:i" }}</td>
+                        <td>{{ qt.fee }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-day">No parking records for this date.</div>
+        {% endif %}
+ 
+        <!-- Batteries -->
+        <div class="section-title">
+            🔋 Battery Sales
+            <span class="section-count">{{ batteries.count }}</span>
+        </div>
+        {% if batteries %}
+        <div class="table-wrapper">
+            <table class="table">
+                <thead>
+                    <tr><th>Brand</th><th>Model</th><th>Customer</th><th>Price</th><th>Time</th></tr>
+                </thead>
+                <tbody>
+                    {% for b in batteries %}
+                    <tr>
+                        <td>{{ b.batery_brand }}</td>
+                        <td>{{ b.voltage }}</td>
+                        <td>{{ b.customer }}</td>
+                        <td>{{ b.price }}</td>
+                        <td>{{ b.created_at|time:"H:i" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-day">No battery records for this date.</div>
+        {% endif %}
+ 
+        <!-- Tyres -->
+        <div class="section-title">
+            🔧 Tyre Sales
+            <span class="section-count">{{ tyres.count }}</span>
+        </div>
+        {% if tyres %}
+        <div class="table-wrapper">
+            <table class="table">
+                <thead>
+                    <tr><th>Brand</th><th>Size</th><th>Customer</th><th>Price</th><th>Time</th></tr>
+                </thead>
+                <tbody>
+                    {% for t in tyres %}
+                    <tr>
+                        <td>{{ t.tyre_brand }}</td>
+                        <td>{{ t.size }}</td>
+                        <td>{{ t.customer }}</td>
+                        <td>{{ t.price }}</td>
+                        <td>{{ t.created_at|time:"H:i" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-day">No tyre records for this date.</div>
+        {% endif %}
+ 
+        <!-- Valves -->
+        <div class="section-title">
+            🔩 Valve Services
+            <span class="section-count">{{ valves.count }}</span>
+        </div>
+        {% if valves %}
+        <div class="table-wrapper">
+            <table class="table">
+                <thead>
+                    <tr><th>Number Plate</th><th>Customer</th><th>Qty</th><th>Price</th><th>Time</th></tr>
+                </thead>
+                <tbody>
+                    {% for v in valves %}
+                    <tr>
+                        <td>{{ v.cnumberplate }}</td>
+                        <td>{{ v.customer }}</td>
+                        <td>{{ v.qty }}</td>
+                        <td>UGX {{ v.price }}</td>
+                        <td>{{ v.created_at|time:"H:i" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-day">No valve records for this date.</div>
+        {% endif %}
+ 
+        <!-- Punctures -->
+        <div class="section-title">
+            📍 Puncture Repairs
+            <span class="section-count">{{ punctures.count }}</span>
+        </div>
+        {% if punctures %}
+        <div class="table-wrapper">
+            <table class="table">
+                <thead>
+                    <tr><th>Number Plate</th><th>Customer</th><th>Qty</th><th>Price</th><th>Time</th></tr>
+                </thead>
+                <tbody>
+                    {% for p in punctures %}
+                    <tr>
+                        <td>{{ p.cnumberplate }}</td>
+                        <td>{{ p.customer }}</td>
+                        <td>{{ p.qty }}</td>
+                        <td>UGX {{ p.price }}</td>
+                        <td>{{ p.created_at|time:"H:i" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-day">No puncture records for this date.</div>
+        {% endif %}
+ 
+        <!-- Pressure -->
+        <div class="section-title">
+            💨 Pressure Checks
+            <span class="section-count">{{ pressures.count }}</span>
+        </div>
+        {% if pressures %}
+        <div class="table-wrapper">
+            <table class="table">
+                <thead>
+                    <tr><th>Number Plate</th><th>Customer</th><th>Qty</th><th>Price</th><th>Time</th></tr>
+                </thead>
+                <tbody>
+                    {% for pr in pressures %}
+                    <tr>
+                        <td>{{ pr.cnumberplate }}</td>
+                        <td>{{ pr.customer }}</td>
+                        <td>{{ pr.qty }}</td>
+                        <td>UGX {{ pr.price }}</td>
+                        <td>{{ pr.created_at|time:"H:i" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-day">No pressure records for this date.</div>
+        {% endif %}
+ 
+    </div>
+ 
+    <!-- Pass active dates to JS for future calendar highlighting -->
+    <script>
+        const activeDates = {active_dates:safe };
+    </script>
+
+<footer style="background-color: #142a68; color: #ffffff; text-align: center; padding: 16px; margin-top: auto; font-size: 0.875rem; width: 100%;">
+    &copy; 2026 ParkEase. All rights reserved. Developed by Aisha.
+</footer>
+</body>
+</html>
+{% endblock %}
+ 

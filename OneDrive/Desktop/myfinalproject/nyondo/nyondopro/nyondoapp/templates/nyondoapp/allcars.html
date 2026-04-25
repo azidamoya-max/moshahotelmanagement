@@ -1,0 +1,194 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Car Entries | ParkEase</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: "Poppins", sans-serif; background: #eaecf5; min-height: 100vh; display: flex; flex-direction: column; }
+        .navbar { background-color: #142a68; padding: 14px 28px; display: flex; align-items: center; justify-content: space-between; z-index: 10; }
+        .navbar-brand { color: white; font-size: 1.2rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+        .navbar-nav { display: flex; gap: 1.5rem; list-style: none; }
+        .nav-link { color: rgba(255,255,255,0.85); text-decoration: none; font-weight: 500; font-size: 0.9rem; }
+        .nav-link:hover { color: white; }
+
+        /* Background blobs */
+        .blob { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; }
+
+        .container { width: 90%; margin: 0 auto; padding: 2rem 0; flex: 1; position: relative; z-index: 1; }
+
+        h1 { font-size: 1.75rem; font-weight: 800; color: #1a2459; margin-bottom: 4px; }
+
+        /* Slot counter */
+        .slot-counter { display: flex; gap: 1rem; margin: 1rem 0 1.5rem; }
+        .slot-badge { padding: 8px 18px; border-radius: 20px; font-size: 0.82rem; font-weight: 600; }
+        .slot-free { background: #d1fae5; color: #065f46; }
+        .slot-occupied { background: #fee2e2; color: #991b1b; }
+        .slot-full { background: #fee2e2; color: #991b1b; padding: 10px 18px; border-radius: 8px; font-weight: 700; font-size: 0.9rem; display: inline-block; margin-bottom: 1rem; }
+
+        /* Search */
+        .search-container { display: flex; justify-content: flex-end; padding: 1rem 0; }
+        .search-form { display: flex; align-items: center; gap: 0; }
+        .search-input { padding: 0.75rem 1.2rem; font-size: 0.9rem; border: 1.5px solid #d1d5e8; border-right: none; border-radius: 10px 0 0 10px; min-width: 280px; outline: none; font-family: inherit; }
+        .search-btn { background: white; color: #1a2459; border: 1.5px solid #d1d5e8; border-left: none; border-radius: 0 10px 10px 0; padding: 0.75rem 1.4rem; cursor: pointer; font-size: 0.9rem; font-weight: 600; font-family: inherit; }
+        .search-btn:hover { background: #142a68; color: white; border-color: #142a68; }
+
+        /* Table */
+        .table-wrapper { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 24px rgba(26,36,89,0.10); }
+        table { width: 100%; border-collapse: collapse; }
+        thead th { background-color: #142a68; padding: 16px 20px; color: white; font-weight: 700; text-align: center; font-size: 0.85rem; }
+        tbody td { padding: 16px 20px; text-align: center; border-bottom: 1px solid #f0f1f8; font-size: 0.88rem; color: #374151; }
+        tbody tr:last-child td { border-bottom: none; }
+        tbody tr:hover { background-color: #f0f4ff; }
+
+        /* Status badges */
+        .badge { padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; display: inline-block; }
+        .badge-parked { background: #d1fae5; color: #065f46; }
+        .badge-collected { background: #dbeafe; color: #1e40af; }
+        .badge-overdue { background: #fee2e2; color: #991b1b; }
+
+        /* Overdue row highlight */
+        tr.overdue-row { background-color: #fff5f5 !important; }
+        tr.overdue-row:hover { background-color: #fee2e2 !important; }
+
+        /* Buttons */
+        .btn { padding: 8px 20px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; cursor: pointer; border: none; text-decoration: none; display: inline-block; transition: background 0.2s; }
+        .btn-view { background: white; color: #142a68; border: 2px solid #c8cde8; }
+        .btn-view:hover { background: #142a68; color: white; border-color: #142a68; }
+        .btn-signout { background: #142a68; color: white; }
+        .btn-signout:hover { background: #0f1e4a; }
+
+        /* Pagination */
+        .pagination-container { display: flex; justify-content: center; margin-top: 28px; }
+        .pagination { display: flex; list-style: none; gap: 8px; }
+        .pagination a { text-decoration: none; color: #142a68; padding: 8px 14px; border: 1.5px solid #c8cde8; border-radius: 8px; background: white; font-size: 0.85rem; }
+        .pagination a:hover { background: #142a68; color: white; border-color: #142a68; }
+        .pagination .active { color: white; background: #4a6fa5; padding: 8px 14px; border-radius: 8px; border: 1.5px solid #4a6fa5; font-size: 0.85rem; }
+
+        footer { background-color: #142a68; padding: 12px; text-align: center; color: rgba(255,255,255,0.7); font-size: 0.85rem; }
+
+        @keyframes floatA { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(18px,16px) scale(1.07); } }
+        @keyframes floatB { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-14px,-12px) scale(1.09); } }
+    </style>
+</head>
+<body>
+
+    <!-- Background blobs -->
+    <div class="blob" style="width:220px;height:220px;background:radial-gradient(circle,rgba(180,160,220,0.25),rgba(160,140,210,0.08));top:25%;left:-170px;animation:floatA 7s ease-in-out infinite;"></div>
+    <div class="blob" style="width:180px;height:180px;background:radial-gradient(circle,rgba(160,140,210,0.22),rgba(140,120,200,0.07));top:42%;left:-145px;animation:floatB 9s ease-in-out infinite;"></div>
+    <div class="blob" style="width:220px;height:220px;background:radial-gradient(circle,rgba(180,160,220,0.25),rgba(160,140,210,0.08));top:25%;right:-170px;animation:floatA 7s ease-in-out infinite;"></div>
+    <div class="blob" style="width:180px;height:180px;background:radial-gradient(circle,rgba(160,140,210,0.22),rgba(140,120,200,0.07));top:42%;right:-145px;animation:floatB 9s ease-in-out infinite;"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-brand">ParkEase Resources</div>
+        <ul class="navbar-nav">
+            {% if user.is_authenticated %}
+            <li><a class="nav-link" href="/addcar/">ADD CAR</a></li>
+            <li><a class="nav-link" href="/car-revenues/">REVENUES</a></li>
+            <li><a class="nav-link" href="/logout/">LOGOUT</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1>ALL CAR ENTRIES</h1>
+        <p style="color:#6b7280; font-size:.88rem; margin-bottom:8px;">Track and manage vehicles in real time.</p>
+
+        <!-- Slot counter -->
+        <div class="slot-counter">
+            <span class="slot-badge slot-free">🟢 Free Slots: {{ free_slots }} / {{ total_slots }}</span>
+            <span class="slot-badge slot-occupied">🔴 Occupied: {{ occupied_slots }} / {{ total_slots }}</span>
+        </div>
+
+        {% if free_slots == 0 %}
+        <div class="slot-full">🚫 PARKING FULL — No slots available</div>
+        {% endif %}
+
+        <!-- Search -->
+        <div class="search-container">
+            <form method="GET" action="" class="search-form">
+                <input type="text" name="q" class="search-input" placeholder="Search by car, plate, driver..." value="{{ q }}">
+                <button type="submit" class="search-btn">Search</button>
+            </form>
+        </div>
+
+        <!-- Table -->
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>CAR BRAND</th>
+                        <th>NUMBER PLATE</th>
+                        <th>SLOT</th>
+                        <th>STATUS</th>
+                        <th>FEE (UGX)</th>
+                        <th>ARRIVAL TIME</th>
+                        <th>ACTIONS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for qt in page_obj %}
+                    <tr {% if qt.p_status == 'OVERDUE' %}class="overdue-row"{% endif %}>
+                        <td>{{ qt.car_brand }}</td>
+                        <td>{{ qt.cnumberplate }}</td>
+                        <td>{% if qt.slot %}Slot {{ qt.slot.number }}{% else %}—{% endif %}</td>
+                        <td>
+                            {% if qt.p_status == 'PARKED' %}
+                                <span class="badge badge-parked">PARKED</span>
+                            {% elif qt.p_status == 'COLLECTED' %}
+                                <span class="badge badge-collected">COLLECTED</span>
+                            {% elif qt.p_status == 'OVERDUE' %}
+                                <span class="badge badge-overdue">⚠️ OVERDUE</span>
+                            {% else %}
+                                {{ qt.p_status }}
+                            {% endif %}
+                        </td>
+                        <td>{{ qt.fee }}</td>
+                        <td>{{ qt.created_at|date:"d M Y, H:i" }}</td>
+                        <td style="display:flex; gap:6px; justify-content:center;">
+                            <a href="/allcars/{{ qt.id }}/" class="btn btn-view">View</a>
+                            {% if qt.p_status != 'COLLECTED' %}
+                            <a href="/allcars/{{ qt.id }}/edit/" class="btn btn-signout">Sign Out</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" style="text-align:center; padding:40px; color:#9aa0c0;">No car entries found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-container">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                    <li><a href="?page=1">First</a></li>
+                    <li><a href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+                {% endif %}
+                {% for num in page_obj.paginator.page_range %}
+                    {% if num == page_obj.number %}
+                        <li><span class="active">{{ num }}</span></li>
+                    {% elif num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %}
+                        <li><a href="?page={{ num }}">{{ num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                {% if page_obj.has_next %}
+                    <li><a href="?page={{ page_obj.next_page_number }}">Next</a></li>
+                    <li><a href="?page={{ page_obj.paginator.num_pages }}">Last</a></li>
+                {% endif %}
+            </ul>
+        </div>
+
+    </div>
+
+    <footer>© 2026 ParkEase. All rights reserved. Developed by Aisha.</footer>
+
+</body>
+</html>

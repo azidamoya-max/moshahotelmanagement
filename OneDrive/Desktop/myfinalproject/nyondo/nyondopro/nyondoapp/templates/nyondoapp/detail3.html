@@ -1,0 +1,257 @@
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Receipt | ParkEase</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+        body {
+            font-family: 'Poppins', 'Arial', sans-serif;
+            background: #eaecf5;
+            color: #1a2459;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+ 
+        /* Blobs */
+        .blob { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; }
+        .blob-1 { width:220px; height:220px; background:radial-gradient(circle,rgba(180,160,220,0.25),rgba(160,140,210,0.08)); top:25%; left:-170px; }
+        .blob-2 { width:180px; height:180px; background:radial-gradient(circle,rgba(160,140,210,0.22),rgba(140,120,200,0.07)); top:42%; left:-145px; }
+        .blob-3 { width:160px; height:160px; background:radial-gradient(circle,rgba(140,180,230,0.20),rgba(120,160,220,0.06)); top:58%; left:-130px; }
+        .blob-4 { width:220px; height:220px; background:radial-gradient(circle,rgba(180,160,220,0.25),rgba(160,140,210,0.08)); top:25%; right:-170px; }
+ 
+        /* Navbar */
+        .navbar {
+            background-color: #142a68;
+            padding: 14px 36px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            z-index: 100;
+        }
+        .navbar-brand {
+            color: white;
+            font-size: 1.25rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            font-family: 'Poppins', sans-serif;
+        }
+        .navbar-nav { margin-left: auto; display: flex; gap: 2rem; list-style: none; }
+        .nav-link { color: white; font-weight: bold; text-decoration: none; transition: color 0.3s; }
+        .nav-link:hover { color: #dfe4ea; }
+ 
+        /* Page */
+        .container {
+            max-width: 860px;
+            margin: 2.5rem auto;
+            padding: 0 1.5rem 3rem;
+            position: relative;
+            z-index: 10;
+            width: 100%;
+        }
+ 
+        /* Receipt card */
+        .receipt-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(26, 36, 89, 0.12);
+            overflow: hidden;
+        }
+ 
+        .receipt-header {
+            background: #142a68;
+            color: white;
+            text-align: center;
+            padding: 2rem 2rem 1.5rem;
+            border-bottom: 4px solid #4a6fa5;
+        }
+        .receipt-header .label {
+            font-size: 0.78rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #a0b4d6;
+            margin-bottom: 6px;
+        }
+        .receipt-header h1 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        .receipt-header .meta {
+            font-size: 0.88rem;
+            color: #cbd5e1;
+            margin-top: 4px;
+        }
+ 
+        .receipt-body {
+            padding: 2rem;
+        }
+ 
+        /* Table */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .table th {
+            background-color: #142a68;
+            color: #ffffff;
+            padding: 14px 18px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: center;
+        }
+        .table td {
+            padding: 16px 18px;
+            font-size: 0.92rem;
+            color: #1f2937;
+            text-align: center;
+            border-bottom: 1px solid #f0f1f8;
+        }
+        .table tbody tr:last-child td { border-bottom: none; }
+        .table tbody tr:hover { background-color: #f8faff; }
+ 
+        /* Status badge */
+        .status-taken {
+            display: inline-block;
+            background: #fef2f2;
+            color: #b91c1c;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 3px 12px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .status-free {
+            display: inline-block;
+            background: #f0fdf4;
+            color: #15803d;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 3px 12px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+ 
+        /* Buttons */
+        .btn-back {
+            display: inline-block;
+            margin-top: 1.5rem;
+            margin-right: 1rem;
+            background-color: #ffffff;
+            color: #1a2459;
+            border: 2px solid #c8cde8;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: background 0.2s, color 0.2s;
+            font-family: 'Poppins', sans-serif;
+        }
+        .btn-back:hover {
+            background-color: #142a68;
+            color: #ffffff;
+            border-color: #142a68;
+        }
+ 
+        .btn-checkout {
+            display: inline-block;
+            margin-top: 1.5rem;
+            background-color: #142a68;
+            color: #ffffff;
+            border: 2px solid #142a68;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: background 0.2s;
+            font-family: 'Poppins', sans-serif;
+        }
+        .btn-checkout:hover {
+            background-color: #4a6fa5;
+            border-color: #4a6fa5;
+        }
+    </style>
+</head>
+<body>
+ 
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="blob blob-4"></div>
+ 
+    <nav class="navbar">
+        <div class="navbar-brand">PARKEASE RESOURCES</div>
+        <ul class="navbar-nav">
+            {% if user.is_authenticated %}
+            <li><a class="nav-link" href="/logout">Logout</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+ 
+    <div class="container">
+        <div class="receipt-card">
+ 
+            <div class="receipt-header">
+                <p class="label">PARKEASE CAR RECEIPT &nbsp;|&nbsp; P.O BOX</p>
+                <h1>CAR PARKED</h1>
+                <p class="meta">Car: {{ qtdetails.car_brand | title }}</p>
+                <p class="meta">Created At: {{ qtdetails.created_at }}</p>
+            </div>
+ 
+            <div class="receipt-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Details</th>
+                            <th>Paid Amount (UGX)</th>
+                            <th>Customer</th>
+                            <th>Color</th>
+                            <th>Car Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ qtdetails.car_brand }}</td>
+                            <td>{{ qtdetails.fee }}</td>
+                            <td>{{ qtdetails.customer }}</td>
+                            <td>{{ qtdetails.color }}</td>
+                            <td>
+                                {% if qtdetails.p_status == 'TAKEN' %}
+                                    <span class="status-taken">{{ qtdetails.p_status }}</span>
+                                {% else %}
+                                    <span class="status-free">{{ qtdetails.p_status }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+ 
+                <a href="{% url 'princapproval' qtdetails.id %}" class="btn-checkout">Car Checkout</a>
+            </div>
+ 
+        </div>
+    </div>
+ 
+
+<footer style="background-color: #142a68; color: #ffffff; text-align: center; padding: 16px; margin-top: auto; font-size: 0.875rem; width: 100%;">
+    &copy; 2026 ParkEase. All rights reserved. Developed by Aisha.
+</footer>
+</body>
+</html>
+{% endblock %}

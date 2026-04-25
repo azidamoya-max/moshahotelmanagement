@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>All Tyre Entries | ParkEase</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #eaecf5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+    }
+    .blob { position: fixed; border-radius: 50%; opacity: 0.18; pointer-events: none; z-index: 0; }
+    .blob-1 { width: 340px; height: 340px; background: #142a68; top: -80px; left: -100px; }
+    .blob-2 { width: 260px; height: 260px; background: #7b8cde; bottom: 60px; right: -80px; }
+    .blob-3 { width: 180px; height: 180px; background: #142a68; bottom: 200px; left: 60px; }
+    nav {
+      background-color: #142a68;
+      padding: 16px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 10;
+    }
+    nav .brand { color: #fff; font-size: 1.1rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
+    nav .nav-links a { color: #fff; text-decoration: none; margin-left: 24px; font-size: 0.9rem; font-weight: 600; }
+    nav .nav-links a:hover { text-decoration: underline; }
+    .page-content { flex: 1; position: relative; z-index: 1; padding: 48px 60px; }
+    .page-title { font-size: 1.8rem; font-weight: 800; color: #142a68; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+    .page-sub { color: #666; font-size: 0.88rem; margin-bottom: 28px; }
+    .search-row { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+    .search-row form { display: flex; }
+    .search-row input {
+      padding: 9px 14px;
+      border: 1px solid #c8cde8;
+      border-right: none;
+      border-radius: 6px 0 0 6px;
+      outline: none;
+      font-size: 0.88rem;
+      width: 220px;
+      background: #fff;
+    }
+    .search-row button {
+      padding: 9px 18px;
+      background: #142a68;
+      color: #fff;
+      border: none;
+      border-radius: 0 6px 6px 0;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .table-card { background: #fff; border-radius: 12px; box-shadow: 0 4px 20px rgba(20,42,104,0.08); overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { background-color: #142a68; }
+    thead th { color: #fff; padding: 14px 20px; text-align: center; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; }
+    tbody tr { border-bottom: 1px solid #f0f2fb; transition: background 0.15s; }
+    tbody tr:hover { background: #f5f6fb; }
+    tbody td { padding: 14px 20px; text-align: center; font-size: 0.9rem; color: #2c2c4a; }
+    .btn-view {
+      display: inline-block;
+      padding: 7px 18px;
+      border: 2px solid #142a68;
+      color: #142a68;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: all 0.2s;
+    }
+    .btn-view:hover { background: #142a68; color: #fff; }
+    .pagination { display: flex; justify-content: center; padding: 24px 0 8px; gap: 8px; }
+    .pagination a, .pagination span {
+      display: inline-block;
+      padding: 7px 14px;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #142a68;
+      text-decoration: none;
+      border: 1px solid #c8cde8;
+      background: #fff;
+    }
+    .pagination .current { background: #142a68; color: #fff; border-color: #142a68; }
+  </style>
+</head>
+<body>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <nav>
+    <div class="brand">ParkEase Resources</div>
+    <div class="nav-links">
+      <a href="{% url 'addtyre' %}">Add Tyre</a>
+      <a href="{% url 'tyre_sales' %}">Sales</a>
+      <a href="{% url 'logout' %}">Logout</a>
+    </div>
+  </nav>
+
+  <div class="page-content">
+    <div class="page-title">All Tyre Entries</div>
+    <p class="page-sub">Track and manage tyre transactions.</p>
+
+    <div class="search-row">
+      <form method="GET">
+        <input type="text" name="q" placeholder="Search from here..." value="{{ request.GET.q }}"/>
+        <button type="submit">Search</button>
+      </form>
+    </div>
+
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>Tyre Brand</th>
+            <th>Price (UGX)</th>
+            <th>Size</th>
+            <th>Receipt</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in page_obj %}
+          <tr>
+            <td>{{ item.tyre_brand }}</td>
+            <td>{% if item.price %}{{ item.price.tprice }}{% else %}—{% endif %}</td>
+            <td>{{ item.size }}</td>
+            <td><a href="{% url 'qtdetailt' item.id %}" class="btn-view">View Details</a></td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4" style="padding:30px; color:#999;">No tyre entries found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination">
+      {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}">«</a>
+      {% endif %}
+      <span class="current">{{ page_obj.number }}</span>
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">»</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <footer style="background-color: #142a68; color: #ffffff; text-align: center; padding: 16px; margin-top: auto; font-size: 0.875rem; width: 100%;">
+      &copy; 2026 ParkEase. All rights reserved. Developed by Aisha.
+  </footer>
+</body>
+</html>

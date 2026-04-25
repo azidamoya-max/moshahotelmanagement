@@ -1,0 +1,150 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Receipt | ParkEase</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: "Poppins", sans-serif; background: #eaecf5; min-height: 100vh; display: flex; flex-direction: column; }
+        .navbar { background-color: #142a68; padding: 14px 28px; display: flex; align-items: center; justify-content: space-between; z-index: 10; }
+        .navbar-brand { color: white; font-size: 1.2rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+        .navbar-nav { display: flex; gap: 1.5rem; list-style: none; }
+        .nav-link { color: rgba(255,255,255,0.85); text-decoration: none; font-weight: 500; font-size: 0.9rem; }
+        .nav-link:hover { color: white; }
+        .container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 3rem 1rem; }
+        .receipt-box {
+            background: white; border-radius: 12px;
+            padding: 2.5rem; width: 100%; max-width: 420px;
+            box-shadow: 0 4px 24px rgba(26,36,89,0.10);
+        }
+        .receipt-header { text-align: center; margin-bottom: 1.5rem; border-bottom: 2px dashed #d1d5db; padding-bottom: 1rem; }
+        .receipt-header h2 { color: #142a68; font-size: 1.2rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+        .receipt-header p { color: #6b7280; font-size: 0.78rem; margin-top: 4px; }
+        .receipt-ref { text-align: center; background: #eaecf5; border-radius: 8px; padding: 10px; margin-bottom: 1.2rem; }
+        .receipt-ref span { font-size: 0.75rem; color: #6b7280; display: block; }
+        .receipt-ref strong { font-size: 1.2rem; color: #142a68; font-weight: 700; letter-spacing: 0.1em; }
+        .receipt-row { display: flex; justify-content: space-between; margin-bottom: 0.6rem; font-size: 0.85rem; }
+        .receipt-row span:first-child { color: #6b7280; }
+        .receipt-row span:last-child { font-weight: 600; color: #1e2a5e; text-align: right; }
+        .receipt-divider { border: none; border-top: 1px dashed #d1d5db; margin: 1rem 0; }
+        .receipt-total { display: flex; justify-content: space-between; font-size: 1rem; font-weight: 700; color: #142a68; margin-top: 0.5rem; }
+        .status-badge { display: inline-block; background: #d1fae5; color: #065f46; padding: 4px 12px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
+        .receipt-footer { text-align: center; margin-top: 1.2rem; font-size: 0.72rem; color: #9ca3af; border-top: 1px dashed #d1d5db; padding-top: 0.75rem; }
+        .btn-row { display: flex; gap: 1rem; margin-top: 1.5rem; }
+        .btn-print { flex: 1; padding: 11px; background: #142a68; color: white; border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 700; cursor: pointer; }
+        .btn-print:hover { background: #0f1e4a; }
+        .btn-back { flex: 1; padding: 11px; background: #eaecf5; color: #142a68; border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 700; cursor: pointer; text-decoration: none; text-align: center; }
+        .btn-back:hover { background: #d1d5db; }
+        footer { background-color: #142a68; padding: 12px; text-align: center; color: rgba(255,255,255,0.7); font-size: 0.85rem; }
+        @media print {
+            body * { visibility: hidden; }
+            .receipt-box, .receipt-box * { visibility: visible; }
+            .receipt-box { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); box-shadow: none; }
+            .btn-row { display: none; }
+            .navbar, footer { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-brand">ParkEase Resources</div>
+        <ul class="navbar-nav">
+            <li><a class="nav-link" href="/allcars/">ALL CAR ENTRIES</a></li>
+            <li><a class="nav-link" href="/logout/">LOGOUT</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="receipt-box">
+
+            <div class="receipt-header">
+                <h2>🅿️ ParkEase — Payment Receipt</h2>
+                <p>{{ car.sign_out_time|date:"d M Y, H:i" }}</p>
+            </div>
+
+            <div class="receipt-ref">
+                <span>Reference No.</span>
+                <strong>PKE-{{ car.id|stringformat:"04d" }}</strong>
+            </div>
+
+            <div class="receipt-row">
+                <span>Car Brand</span>
+                <span>{{ car.car_brand }}</span>
+            </div>
+            <div class="receipt-row">
+                <span>Number Plate</span>
+                <span>{{ car.cnumberplate }}</span>
+            </div>
+            <div class="receipt-row">
+                <span>Vehicle Type</span>
+                <span>{{ car.cparktype }}</span>
+            </div>
+            <div class="receipt-row">
+                <span>Driver Name</span>
+                <span>{{ car.customer }} {{ car.customerv }}</span>
+            </div>
+            <div class="receipt-row">
+                <span>Parking Slot</span>
+                <span>Slot {{ car.slot.number }}</span>
+            </div>
+
+            <hr class="receipt-divider">
+
+            <div class="receipt-row">
+                <span>Arrival Time</span>
+                <span>{{ car.created_at|date:"d M Y, H:i" }}</span>
+            </div>
+            <div class="receipt-row">
+                <span>Sign-out Time</span>
+                <span>{{ car.sign_out_time|date:"d M Y, H:i" }}</span>
+            </div>
+            <div class="receipt-row">
+                <span>Duration</span>
+                <span>
+                    {% if duration %}
+                        {{ duration.seconds|divisibleby:3600 }}
+                        {% with hours=duration.seconds|divisibleby:3600 %}
+                        {% endwith %}
+                        {{ duration }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </span>
+            </div>
+            <div class="receipt-row">
+                <span>Payment Mode</span>
+                <span>{{ car.cparkpaymode }}</span>
+            </div>
+            <div class="receipt-row">
+                <span>Status</span>
+                <span><span class="status-badge">{{ car.p_status }}</span></span>
+            </div>
+
+            <hr class="receipt-divider">
+
+            <div class="receipt-total">
+                <span>Total Fee (UGX)</span>
+                <span>{{ car.fee|floatformat:0 }}</span>
+            </div>
+
+            <div class="receipt-footer">
+                Thank you for parking at Parkville.<br>
+                © 2026 ParkEase Resources
+            </div>
+
+            <div class="btn-row">
+                <button class="btn-print" onclick="window.print()">🖨️ Print Receipt</button>
+                <a href="/allcars/" class="btn-back">← Back to List</a>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>© 2026 ParkEase. All rights reserved. Developed by Aisha.</footer>
+
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Car Revenues | ParkEase</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "Poppins", sans-serif; background: #eaecf5; min-height: 100vh; display: flex; flex-direction: column; }
+    .blob { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; }
+    .navbar { background-color: #142a68; padding: 14px 28px; display: flex; align-items: center; justify-content: space-between; z-index: 10; }
+    .navbar-brand { color: white; font-size: 1.2rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+    .navbar-nav { display: flex; gap: 1.5rem; list-style: none; }
+    .nav-link { color: rgba(255,255,255,0.85); text-decoration: none; font-weight: 500; font-size: 0.9rem; }
+    .nav-link:hover { color: white; }
+    .container { width: 90%; margin: 0 auto; padding: 2rem 0; flex: 1; position: relative; z-index: 1; }
+    h1 { font-size: 1.75rem; font-weight: 800; color: #1a2459; margin-bottom: 4px; }
+    .revenue-bar {
+      background: #142a68;
+      color: #fff;
+      border-radius: 10px;
+      padding: 16px 24px;
+      margin: 20px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .revenue-bar .label { font-size: 0.75rem; opacity: 0.75; text-transform: uppercase; letter-spacing: 1px; }
+    .revenue-bar .amount { font-size: 1.6rem; font-weight: 800; }
+    .table-wrapper { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 24px rgba(26,36,89,0.10); }
+    table { width: 100%; border-collapse: collapse; }
+    thead th { background-color: #142a68; padding: 16px 20px; color: white; font-weight: 700; text-align: center; font-size: 0.85rem; }
+    tbody td { padding: 16px 20px; text-align: center; border-bottom: 1px solid #f0f1f8; font-size: 0.88rem; color: #374151; }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background-color: #f0f4ff; }
+    tfoot tr { background-color: #e8eaf6; }
+    tfoot td { padding: 14px 20px; text-align: center; font-size: 0.95rem; font-weight: 800; color: #142a68; text-transform: uppercase; }
+    .badge { padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; display: inline-block; }
+    .badge-parked { background: #d1fae5; color: #065f46; }
+    .badge-collected { background: #dbeafe; color: #1e40af; }
+    .badge-overdue { background: #fee2e2; color: #991b1b; }
+    footer { background-color: #142a68; padding: 12px; text-align: center; color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-top: auto; }
+    @keyframes floatA { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(18px,16px) scale(1.07); } }
+    @keyframes floatB { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-14px,-12px) scale(1.09); } }
+  </style>
+</head>
+<body>
+
+  <div class="blob" style="width:220px;height:220px;background:radial-gradient(circle,rgba(180,160,220,0.25),rgba(160,140,210,0.08));top:25%;left:-170px;animation:floatA 7s ease-in-out infinite;"></div>
+  <div class="blob" style="width:180px;height:180px;background:radial-gradient(circle,rgba(160,140,210,0.22),rgba(140,120,200,0.07));top:42%;left:-145px;animation:floatB 9s ease-in-out infinite;"></div>
+  <div class="blob" style="width:220px;height:220px;background:radial-gradient(circle,rgba(180,160,220,0.25),rgba(160,140,210,0.08));top:25%;right:-170px;animation:floatA 7s ease-in-out infinite;"></div>
+  <div class="blob" style="width:180px;height:180px;background:radial-gradient(circle,rgba(160,140,210,0.22),rgba(140,120,200,0.07));top:42%;right:-145px;animation:floatB 9s ease-in-out infinite;"></div>
+
+  <nav class="navbar">
+    <div class="navbar-brand">ParkEase Resources</div>
+    <ul class="navbar-nav">
+      <li><a class="nav-link" href="/addcar/">ADD CAR</a></li>
+      <li><a class="nav-link" href="/allcars/">ALL CARS</a></li>
+      <li><a class="nav-link" href="/logout/">LOGOUT</a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <h1>CAR PARKING REVENUES</h1>
+    <p style="color:#6b7280; font-size:.88rem; margin-bottom:8px;">All parking fee transactions — full history.</p>
+
+    <div class="revenue-bar">
+      <div>
+        <div class="label">Total Parking Revenue (All Time)</div>
+        <div class="amount">UGX {{ grand_total }}</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="label">Total Transactions</div>
+        <div class="amount">{{ total_count }}</div>
+      </div>
+    </div>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>DATE / TIME</th>
+            <th>CAR BRAND</th>
+            <th>NUMBER PLATE</th>
+            <th>VEHICLE TYPE</th>
+            <th>STATUS</th>
+            <th>FEE (UGX)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in revenues %}
+          <tr>
+            <td>{{ r.created_at|date:"d M Y, H:i" }}</td>
+            <td>{{ r.car_brand|default:"—" }}</td>
+            <td>{{ r.cnumberplate|default:"—" }}</td>
+            <td>{{ r.cparktype|default:"—" }}</td>
+            <td>
+              {% if r.p_status == 'PARKED' %}
+                <span class="badge badge-parked">PARKED</span>
+              {% elif r.p_status == 'COLLECTED' %}
+                <span class="badge badge-collected">COLLECTED</span>
+              {% elif r.p_status == 'OVERDUE' %}
+                <span class="badge badge-overdue">OVERDUE</span>
+              {% else %}
+                {{ r.p_status }}
+              {% endif %}
+            </td>
+            <td>{{ r.fee }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6" style="padding:40px; color:#9aa0c0;">No revenue records found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        {% if revenues %}
+        <tfoot>
+          <tr>
+            <td colspan="5">Grand Total</td>
+            <td>UGX {{ grand_total }}</td>
+          </tr>
+        </tfoot>
+        {% endif %}
+      </table>
+    </div>
+  </div>
+
+  <footer>© 2026 ParkEase. All rights reserved. Developed by Aisha.</footer>
+</body>
+</html>

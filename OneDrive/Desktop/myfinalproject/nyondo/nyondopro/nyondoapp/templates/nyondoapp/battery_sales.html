@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Battery Sales | ParkEase</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #eaecf5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+    }
+    .blob { position: fixed; border-radius: 50%; opacity: 0.18; pointer-events: none; z-index: 0; }
+    .blob-1 { width: 340px; height: 340px; background: #142a68; top: -80px; left: -100px; }
+    .blob-2 { width: 260px; height: 260px; background: #7b8cde; bottom: 60px; right: -80px; }
+    .blob-3 { width: 180px; height: 180px; background: #142a68; bottom: 200px; left: 60px; }
+    nav {
+      background-color: #142a68;
+      padding: 16px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 10;
+    }
+    nav .brand { color: #fff; font-size: 1.1rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
+    nav .nav-links a { color: #fff; text-decoration: none; margin-left: 24px; font-size: 0.9rem; font-weight: 600; }
+    nav .nav-links a:hover { text-decoration: underline; }
+    .page-content { flex: 1; position: relative; z-index: 1; padding: 48px 60px; }
+    .page-title { font-size: 1.8rem; font-weight: 800; color: #142a68; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+    .page-sub { color: #666; font-size: 0.88rem; margin-bottom: 28px; }
+    .revenue-bar {
+      background: #142a68;
+      color: #fff;
+      border-radius: 10px;
+      padding: 16px 24px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .revenue-bar .label { font-size: 0.75rem; opacity: 0.75; text-transform: uppercase; letter-spacing: 1px; }
+    .revenue-bar .amount { font-size: 1.6rem; font-weight: 800; }
+    .table-card { background: #fff; border-radius: 12px; box-shadow: 0 4px 20px rgba(20,42,104,0.08); overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { background-color: #142a68; }
+    thead th { color: #fff; padding: 14px 20px; text-align: center; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; }
+    tbody tr { border-bottom: 1px solid #f0f2fb; transition: background 0.15s; }
+    tbody tr:hover { background: #f5f6fb; }
+    tbody td { padding: 14px 20px; text-align: center; font-size: 0.9rem; color: #2c2c4a; }
+    tfoot tr { background-color: #e8eaf6; }
+    tfoot td { padding: 14px 20px; text-align: center; font-size: 0.95rem; font-weight: 800; color: #142a68; text-transform: uppercase; }
+  </style>
+</head>
+<body>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <nav>
+    <div class="brand">ParkEase Resources</div>
+    <div class="nav-links">
+      <a href="/battery/">Add Battery</a>
+      <a href="{% url 'allbattery' %}">All Batteries</a>
+      <a href="{% url 'logout' %}">Logout</a>
+    </div>
+  </nav>
+
+  <div class="page-content">
+    <div class="page-title">Battery Sales Summary</div>
+    <p class="page-sub">All battery transactions recorded — full history.</p>
+
+    <div class="revenue-bar">
+      <div>
+        <div class="label">Total Battery Revenue (All Time)</div>
+        <div class="amount">UGX {{ grand_total }}</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="label">Total Transactions</div>
+        <div class="amount">{{ total_count }}</div>
+      </div>
+    </div>
+
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>Date / Time</th>
+            <th>Voltage</th>
+            <th>Model</th>
+            <th>Qty</th>
+            <th>Unit Price (UGX)</th>
+            <th>Total (UGX)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for sale in sales %}
+          <tr>
+            <td>{{ sale.created_at|date:"d M Y H:i" }}</td>
+            <td>{{ sale.voltage }}</td>
+            <td>{{ sale.bmodel }}</td>
+            <td>{{ sale.qty }}</td>
+            <td>{{ sale.unit_price }}</td>
+            <td>{{ sale.total }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6" style="padding:30px; color:#999;">No battery sales recorded yet.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        {% if sales %}
+        <tfoot>
+          <tr>
+            <td colspan="5">Grand Total</td>
+            <td>UGX {{ grand_total }}</td>
+          </tr>
+        </tfoot>
+        {% endif %}
+      </table>
+    </div>
+  </div>
+
+  <footer style="background-color: #142a68; color: #ffffff; text-align: center; padding: 16px; margin-top: auto; font-size: 0.875rem; width: 100%;">
+      &copy; 2026 ParkEase. All rights reserved. Developed by Aisha.
+  </footer>
+</body>
+</html>

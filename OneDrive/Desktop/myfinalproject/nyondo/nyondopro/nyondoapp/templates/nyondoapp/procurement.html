@@ -1,0 +1,316 @@
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Nakaweesa Diana">
+    <meta name="description" content="Signup page for user registration">
+    <meta name="keywords" content="signup, registration, user">
+
+    <!-- TailwindCSS -->
+    <link href="{% static 'css/output.css' %}" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+
+    <title>Battery Corner</title>
+
+    <style>
+        body {
+            font-family: "Open Sans", sans-serif;
+            background-color: #f4f6f8;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            margin: 0 auto;
+            padding: 2rem 0;
+            flex: 1;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        .table th,
+        .table td {
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        .table th {
+            background-color: #4FC3A1;;
+            padding: 10px .625em .625em .625em;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .table td {
+            padding: 10px .625em .625em .625em;
+            padding: 110; /* Remove padding */
+            text-align: center; /* Center-align content */
+        }
+
+        .table tr:nth-child(even) {
+            background-color: #f9fafc;
+        }
+
+        .table tr:hover {
+            background-color: #e9eff5;
+        }
+
+        .btn {
+            display: block; /* Makes the button a block element */
+            width: 100%; /* Ensures the button fills the full width of the cell */
+            height: 100%; /* Ensures the button fills the full height of the cell */
+            box-sizing: border-box; /* Includes padding and borders in the element's total size */
+            border: none;
+            text-align: center;
+            color: white;
+            font-size: 1rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary {
+            background-color: orange;
+            font-weight: bold;
+        }
+
+        .btn-primary:hover {
+            background-color: #e69500;
+        }
+        .no-underline {
+            text-decoration: none;
+        }
+
+        .search-container {
+            display: flex;
+            justify-content: flex-end;
+            padding: 1rem 0;
+            gap: 1rem;
+        }
+
+        form {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 2px solid #ddd;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-input {
+            padding: 0.5rem;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            flex-grow: 1;
+        }
+
+        .search-btn {
+            background-color: #5a6a8e;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .search-btn:hover {
+            background-color: #4d5c7a;
+        }
+
+        h1 {
+            text-align: center;
+            font-family: 'Georgia', serif;
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #555;
+        }
+
+        .navbar {
+            background-color: #16222a;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar img {
+            height: 40px; /* Adjust as needed */
+            margin-right: 15px;
+        }
+
+        .navbar-brand {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-family: 'Dancing Script', cursive;
+        }
+
+        .navbar-nav {
+            margin-left: auto;
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-item {
+            list-style: none;
+        }
+
+        .nav-link {
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: #dfe4ea;
+        }
+        .pagination-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .pagination {
+        display: flex;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        gap: 10px;
+    }
+
+    .pagination li {
+        display: inline;
+    }
+
+    .pagination a {
+        text-decoration: none;
+        color: #555;
+        padding: 8px 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .pagination a:hover {
+        background-color: #5a6a8e;
+        color: white;
+    }
+
+    .pagination .active {
+        color: white;
+        background-color: #5a6a8e;
+        padding: 8px 12px;
+        border-radius: 4px;
+    }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <img src="{% static 'images/mapflag.jpg' %}" alt="Map Flag">
+        <div class="navbar-brand">PARKEASE RESOURCES</div>
+        <ul class="navbar-nav">
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+                <a class="nav-link" href="/addtyre">ADD TYRE</a>
+            </li>
+
+                <a class="nav-link" href="/logout">LOGOUT</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1>ALL TYRE ENTRIES</h1>
+
+        <div class="search-container">
+            <form method="GET" action="">
+                {{ requisition_filters.form }}
+                <input type="text" name="q" class="search-input" placeholder="Search from here..." value="{{ request.GET.q }}">
+                <button type="submit" class="search-btn">🔍 Search</button>
+            </form>
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>TYRE BRAND</th>
+                    <th>PRICE</th>
+                    <th>SIZE</th>
+                    
+                    <th>RECEIPT</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for qt in page_obj %}
+                <tr>
+                    <td>{{ qt.tyre_brand }}</td>
+                    <td>{{ qt.price }}</td>
+                    <td>{{ qt.size }}</td>
+                    
+                    <td>
+                        <a href="{% url 'qtdetailt' qt.id %}" class="no-underline">
+                            <button class="btn btn-primary">View Details</button>
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="text-align: center;">No Entries Yet!</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="pagination-container">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                    <li><a href="?page=1">First</a></li>
+                    <li><a href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+                {% endif %}
+        
+                {% for num in page_obj.paginator.page_range %}
+                    {% if num == page_obj.number %}
+                        <li><span class="active">{{ num }}</span></li>
+                    {% elif num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %}
+                        <li><a href="?page={{ num }}">{{ num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+        
+                {% if page_obj.has_next %}
+                    <li><a href="?page={{ page_obj.next_page_number }}">Next</a></li>
+                    <li><a href="?page={{ page_obj.paginator.num_pages }}">Last</a></li>
+                {% endif %}
+            </ul>
+        </div>        
+    </div>
+
+<footer style="background-color: #142a68; color: #ffffff; text-align: center; padding: 16px; margin-top: auto; font-size: 0.875rem; width: 100%;">
+    &copy; 2026 ParkEase. All rights reserved. Developed by Aisha.
+</footer>
+</body>
+
+</html>
+{% endblock %}

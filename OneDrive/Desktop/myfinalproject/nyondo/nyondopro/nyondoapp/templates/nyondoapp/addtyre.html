@@ -1,0 +1,180 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Tyre | ParkEase</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: "Poppins", sans-serif; background: #eaecf5; min-height: 100vh; display: flex; flex-direction: column; position: relative; overflow-x: hidden; }
+        .navbar { background-color: #142a68; padding: 14px 28px; display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 10; }
+        .navbar-brand { color: white; font-size: 1.2rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+        .navbar-nav { display: flex; gap: 1.5rem; list-style: none; }
+        .nav-link { color: rgba(255,255,255,0.85); text-decoration: none; font-weight: 500; font-size: 0.9rem; }
+        .nav-link:hover { color: white; }
+        .blob { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; }
+        .container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 3rem 1rem; position: relative; z-index: 1; }
+        .form-box { background: white; border-radius: 12px; padding: 2.5rem; box-shadow: 0 4px 24px rgba(26,36,89,0.10); width: 100%; max-width: 600px; max-height: 85vh; overflow-y: auto; }
+        .form-box h2 { text-align: center; color: #142a68; font-size: 1.3rem; font-weight: 700; margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .form-group { margin-bottom: 1.1rem; }
+        label { display: block; font-size: 0.82rem; color: #374151; margin-bottom: 0.35rem; font-weight: 600; }
+        .optional { color: #9ca3af; font-size: 0.75rem; font-weight: 400; margin-left: 0.3rem; }
+        input[type="text"], select, textarea {
+            width: 100%; padding: 10px 12px;
+            border: 1px solid #d1d5db; border-radius: 6px;
+            font-size: 0.9rem; font-family: inherit;
+            background: white; color: #1e2a5e;
+        }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: #142a68; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .btn-submit { width: 100%; padding: 12px; background-color: #142a68; border: none; border-radius: 8px; color: white; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 1rem; transition: background 0.2s; }
+        .btn-submit:hover { background-color: #0f1e4a; }
+        .alert-success { background: #d1fae5; border: 1px solid #a7f3d0; color: #065f46; padding: 0.85rem 1rem; border-radius: 8px; margin-bottom: 1rem; font-weight: 600; text-align: center; }
+        footer { background-color: #142a68; padding: 12px; text-align: center; color: rgba(255,255,255,0.7); font-size: 0.85rem; position: relative; z-index: 10; }
+
+        /* Receipt styles */
+        .receipt-wrap { display: none; margin-top: 1.5rem; border-top: 2px dashed #d1d5db; padding-top: 1.5rem; }
+        .receipt-wrap.show { display: block; }
+        .receipt {
+            width: 280px; margin: 0 auto;
+            border: 1px solid #d1d5db; border-radius: 8px;
+            padding: 1rem; font-size: 0.78rem; color: #1e2a5e;
+            background: white;
+        }
+        .receipt-header { text-align: center; margin-bottom: 0.75rem; border-bottom: 1px dashed #d1d5db; padding-bottom: 0.5rem; }
+        .receipt-header h3 { font-size: 0.9rem; font-weight: 800; color: #142a68; text-transform: uppercase; }
+        .receipt-header p { font-size: 0.7rem; color: #6b7280; }
+        .receipt-row { display: flex; justify-content: space-between; margin-bottom: 0.3rem; }
+        .receipt-row span:first-child { color: #6b7280; }
+        .receipt-row span:last-child { font-weight: 600; }
+        .receipt-total { border-top: 1px dashed #d1d5db; margin-top: 0.5rem; padding-top: 0.5rem; display: flex; justify-content: space-between; font-weight: 800; font-size: 0.85rem; }
+        .receipt-footer { text-align: center; margin-top: 0.75rem; font-size: 0.68rem; color: #9ca3af; border-top: 1px dashed #d1d5db; padding-top: 0.5rem; }
+        .btn-print { width: 100%; padding: 8px; background: #142a68; color: white; border: none; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer; margin-top: 0.75rem; }
+        .btn-print:hover { background: #0f1e4a; }
+
+        @media print {
+            body * { visibility: hidden; }
+            .receipt, .receipt * { visibility: visible; }
+            .receipt { position: fixed; top: 20px; left: 20px; border: none; }
+            .btn-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="blob" style="width:220px;height:220px;background:radial-gradient(circle,rgba(180,160,220,0.25),rgba(160,140,210,0.08));top:25%;left:-170px;"></div>
+    <div class="blob" style="width:180px;height:180px;background:radial-gradient(circle,rgba(160,140,210,0.22),rgba(140,120,200,0.07));top:42%;left:-145px;"></div>
+    <div class="blob" style="width:220px;height:220px;background:radial-gradient(circle,rgba(180,160,220,0.25),rgba(160,140,210,0.08));top:25%;right:-170px;"></div>
+    <div class="blob" style="width:180px;height:180px;background:radial-gradient(circle,rgba(160,140,210,0.22),rgba(140,120,200,0.07));top:42%;right:-145px;"></div>
+
+    <nav class="navbar">
+        <div class="navbar-brand">ParkEase Resources</div>
+        <ul class="navbar-nav">
+            {% if user.is_authenticated %}
+            <li><a class="nav-link" href="{% url 'alltyre' %}">ALL TYRE ENTRIES</a></li>
+            <li><a class="nav-link" href="{% url 'logout' %}">LOGOUT</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="form-box">
+            <h2>Record a Tyre Transaction</h2>
+
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert-success">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="POST" id="tyreForm">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label>Tyre Brand *</label>
+                    <select name="tyre_brand" required>
+                        <option value="">---------</option>
+                        {% for brand in form.tyre_brand.field.queryset %}
+                        <option value="{{ brand.pk }}">{{ brand }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Tyre Price *</label>
+                    <select name="price" required>
+                        <option value="">---------</option>
+                        {% for price in form.price.field.queryset %}
+                        <option value="{{ price.pk }}">{{ price }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Tyre Size *</label>
+                        <input type="text" name="size" placeholder="e.g. 205/55R16" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Item Quantity *</label>
+                        <input type="text" name="qty" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Serial Number <span class="optional">(optional)</span></label>
+                        <input type="text" name="serial">
+                    </div>
+                    <div class="form-group">
+                        <label>Payment Mode *</label>
+                        <select name="payment_mode" required>
+                            <option value="CASH">Cash</option>
+                            <option value="MM">Mobile Money</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Customer Name *</label>
+                    <input type="text" name="customer" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Any Other Details <span class="optional">(optional)</span></label>
+                    <input type="text" name="decription">
+                </div>
+
+                <button type="submit" class="btn-submit">SUBMIT</button>
+            </form>
+
+            <!-- Receipt shown after success -->
+            {% if show_receipt %}
+            <div class="receipt-wrap show">
+                <div class="receipt" id="receiptBox">
+                    <div class="receipt-header">
+                        <h3>ParkEase Resources</h3>
+                        <p>Tyre Transaction Receipt</p>
+                        <p>{{ receipt.date }}</p>
+                    </div>
+                    <div class="receipt-row"><span>Customer</span><span>{{ receipt.customer }}</span></div>
+                    <div class="receipt-row"><span>Brand</span><span>{{ receipt.brand }}</span></div>
+                    <div class="receipt-row"><span>Size</span><span>{{ receipt.size }}</span></div>
+                    <div class="receipt-row"><span>Serial</span><span>{{ receipt.serial|default:"—" }}</span></div>
+                    <div class="receipt-row"><span>Qty</span><span>{{ receipt.qty }}</span></div>
+                    <div class="receipt-row"><span>Payment</span><span>{{ receipt.payment_mode }}</span></div>
+                    <div class="receipt-total"><span>Amount</span><span>UGX {{ receipt.price }}</span></div>
+                    <div class="receipt-footer">Thank you for your business!<br>© 2026 ParkEase</div>
+                </div>
+                <button class="btn-print" onclick="window.print()">🖨️ Print Receipt</button>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+    <footer>© 2026 ParkEase. All rights reserved. Developed by Aisha.</footer>
+</body>
+</html>

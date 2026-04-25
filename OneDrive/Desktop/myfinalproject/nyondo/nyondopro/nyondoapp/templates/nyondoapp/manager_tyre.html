@@ -1,0 +1,132 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tyre Corner | ParkEase</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: "Poppins", sans-serif; background: #eaecf5; min-height: 100vh; display: flex; flex-direction: column; }
+        .blob { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; }
+        .navbar { background-color: #142a68; padding: 14px 36px; display: flex; align-items: center; position: relative; z-index: 100; }
+        .navbar-brand { color: white; font-size: 1.25rem; font-weight: 800; text-transform: uppercase; letter-spacing: 2.5px; font-family: 'Poppins', sans-serif; }
+        .navbar-nav { margin-left: auto; display: flex; gap: 1.5rem; list-style: none; align-items: center; }
+        .nav-link { color: white; font-weight: 500; text-decoration: none; font-size: 0.88rem; transition: color 0.2s; }
+        .nav-link:hover { color: #dfe4ea; }
+        .nav-link.active-nav { background: #4a6fa5; padding: 6px 14px; border-radius: 6px; }
+        .container { width:92%; max-width:1200px; margin:0 auto; padding:2rem 0; flex:1; position:relative; z-index:10; }
+        h1 { font-family: 'Poppins', sans-serif; font-size: 1.75rem; font-weight: 800; color: #1a2459; margin-bottom: 4px; }
+        .search-container { display:flex; justify-content:flex-end; margin-bottom:1rem; }
+        .search-container form { display:flex; align-items:center; }
+        .search-input { padding:0.72rem 1.2rem; font-size:0.88rem; border:1.5px solid #d1d5e8; border-right:none; border-radius:10px 0 0 10px; min-width:260px; outline:none; }
+        .search-btn { background:#fff; color:#1a2459; border:1.5px solid #d1d5e8; border-left:none; border-radius:0 10px 10px 0; padding:0.72rem 1.2rem; font-size:0.88rem; font-weight:600; cursor:pointer; }
+        .search-btn:hover { background:#142a68; color:#fff; border-color:#142a68; }
+        .table-wrapper { background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 4px 24px rgba(26,36,89,0.10); }
+        table { width:100%; border-collapse:collapse; }
+        thead th { background-color:#142a68; padding:14px 16px; color:#fff; font-weight:700; text-align:center; font-size:0.82rem; text-transform:uppercase; }
+        tbody td { padding:14px 16px; text-align:center; border-bottom:1px solid #f0f1f8; font-size:0.88rem; color:#374151; }
+        tbody tr:last-child td { border-bottom:none; }
+        tbody tr:hover { background:#f0f4ff; }
+        .btn { padding:6px 14px; border-radius:7px; font-size:0.78rem; font-weight:700; text-transform:uppercase; cursor:pointer; border:none; text-decoration:none; display:inline-block; transition:background 0.2s; margin:2px; }
+        .btn-edit { background:#142a68; color:#fff; }
+        .btn-edit:hover { background:#0f1e4a; }
+        .btn-delete { background:#fee2e2; color:#b91c1c; border:1.5px solid #fca5a5; }
+        .btn-delete:hover { background:#b91c1c; color:#fff; }
+        .pagination-container { display:flex; justify-content:center; margin-top:24px; }
+        .pagination { display:flex; list-style:none; gap:8px; }
+        .pagination a { text-decoration:none; color:#142a68; padding:7px 13px; border:1.5px solid #c8cde8; border-radius:7px; font-size:0.85rem; background:#fff; }
+        .pagination a:hover { background:#142a68; color:#fff; border-color:#142a68; }
+        .pagination .active { color:#fff; background:#4a6fa5; padding:7px 13px; border-radius:7px; font-size:0.85rem; border:1.5px solid #4a6fa5; }
+        footer { background-color:#142a68; padding:12px; text-align:center; color:rgba(255,255,255,0.7); font-size:0.85rem; margin-top:auto; }
+    </style>
+</head>
+<body>
+    <div class="blob" style="width:220px;height:220px;background:radial-gradient(circle,rgba(180,160,220,0.25),rgba(160,140,210,0.08));top:25%;left:-170px;"></div>
+    <div class="blob" style="width:180px;height:180px;background:radial-gradient(circle,rgba(160,140,210,0.22),rgba(140,120,200,0.07));top:42%;right:-145px;"></div>
+
+    <nav class="navbar">
+        <div class="navbar-brand">PARKEASE RESOURCES</div>
+        <ul class="navbar-nav">
+            {% if user.is_authenticated %}
+            <li><a class="nav-link" href="/director">Parking</a></li>
+            <li><a class="nav-link" href="/manager-battery/">Battery Corner</a></li>
+            <li><a class="nav-link active-nav" href="/manager-tyre/">Tyre Corner</a></li>
+            <li><a class="nav-link" href="/reports">📊 Reports</a></li>
+            <li><a class="nav-link" href="/logout">Logout</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1>TYRE CORNER</h1>
+        <p style="color:#6b7280; font-size:.88rem; margin-bottom:16px;">Manage and oversee all tyre records.</p>
+
+        <div class="search-container">
+            <form method="GET" action="">
+                <input type="text" name="q" class="search-input" placeholder="Search by size, serial..." value="{{ q }}">
+                <button type="submit" class="search-btn">Search</button>
+            </form>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tyre Brand</th>
+                        <th>Size</th>
+                        <th>Serial</th>
+                        <th>Qty</th>
+                        <th>Price (UGX)</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for qt in page_obj %}
+                    <tr>
+                        <td>{{ qt.tyre_brand }}</td>
+                        <td>{{ qt.size|default:"—" }}</td>
+                        <td>{{ qt.serial|default:"—" }}</td>
+                        <td>{{ qt.qty|default:"—" }}</td>
+                        <td>{% if qt.price %}{{ qt.price.tprice }}{% else %}—{% endif %}</td>
+                        <td>{{ qt.created_at|date:"d M Y, H:i" }}</td>
+                        <td>
+                            <a href="/dashboard3/{{ qt.id }}/edit/" class="btn btn-edit">Edit</a>
+                            <a href="/dashboard3/{{ qt.id }}/delete/" class="btn btn-delete" onclick="return confirm('Delete this record?')">Delete</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" style="text-align:center; padding:40px; color:#9aa0c0;">No tyre records found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination-container">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                    <li><a href="?page=1">First</a></li>
+                    <li><a href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+                {% endif %}
+                {% for num in page_obj.paginator.page_range %}
+                    {% if num == page_obj.number %}
+                        <li><span class="active">{{ num }}</span></li>
+                    {% elif num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %}
+                        <li><a href="?page={{ num }}">{{ num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                {% if page_obj.has_next %}
+                    <li><a href="?page={{ page_obj.next_page_number }}">Next</a></li>
+                    <li><a href="?page={{ page_obj.paginator.num_pages }}">Last</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <footer>© 2026 ParkEase. All rights reserved. Developed by Aisha.</footer>
+</body>
+</html>

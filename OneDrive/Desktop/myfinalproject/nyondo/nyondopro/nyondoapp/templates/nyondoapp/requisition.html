@@ -1,0 +1,193 @@
+{% load crispy_forms_tags %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Requisition Form</title>
+
+    <!-- Inline CSS -->
+    <style>
+        /* General styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f4f7;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header styling */
+        header {
+            background-color: #a6aebf;
+            padding: 10px 20px;
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        /* Form container styling */
+        .form-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Form styling */
+        .form-box {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .form-box h2 {
+            margin-bottom: 20px;
+            text-align: center;
+            color: #444;
+        }
+
+        /* Button styling */
+        button[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #5a6a8e;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #4d5c7a;
+        }
+
+        /* Footer styling */
+        footer {
+            background-color: #16222a;
+            padding: 10px;
+            text-align: center;
+            color: #fff;
+            font-size: 0.9em;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+
+        /* Crispy form styling override */
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .navbar {
+            background-color: #16222a;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar img {
+            height: 40px; /* Adjust as needed */
+            margin-right: 15px;
+        }
+
+        .navbar-brand {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-family: 'Dancing Script', cursive;
+        }
+
+        .navbar-nav {
+            margin-left: auto;
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-item {
+            list-style: none;
+        }
+
+        .nav-link {
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: #dfe4ea;
+        }
+        
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <img src="{% static 'images/mapflag.jpg' %}" alt="Map Flag">
+        <div class="navbar-brand">ParkEase Resources</div>
+        <ul class="navbar-nav">
+            {% if user.is_authenticated %} 
+            <li class="nav-item">
+                <a class="nav-link" href="/dashboardmega">CAR ENTRY</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/user">MY REQUISITIONS</a>
+            </li>           
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">LOGOUT</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <header>
+        CAR ENTRY FORM
+    </header>
+
+    {% block content %}
+    <div class="form-container">
+        <div class="form-box">
+            <h2>Register a Car</h2>
+            <form enctype="multipart/form-data" method="POST" novalidate>
+                {% csrf_token %}
+                {{ form|crispy }}
+                <button type="submit">SUBMIT</button>
+            </form>
+        </div>
+    </div>
+
+<ul class="messages">
+{% for messages in messagess %}
+<li {% if message.tags %} class="{{message}}" {% endif %}>{{ message }}</li>
+</ul>
+    {% endfor %}
+
+
+
+
+    {% endblock %}
+
+    
+    
+
+    <footer>
+        © 2026 ParkEase. All rights reserved. Developed by Aisha.
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,169 @@
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Director Dashboard | ParkEase</title>
+    <link href="{% static 'css/output.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: "Open Sans", sans-serif; background: #eaecf5; color: #2b3e40; display: flex; flex-direction: column; min-height: 100vh; }
+
+        .blob { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; }
+        .blob-1 { width:400px; height:400px; background:radial-gradient(circle,rgba(180,160,220,0.35),rgba(160,140,210,0.08)); top:-120px; left:-80px; }
+        .blob-2 { width:350px; height:350px; background:radial-gradient(circle,rgba(140,180,230,0.30),rgba(120,160,220,0.06)); top:-80px; right:100px; }
+        .blob-3 { width:350px; height:350px; background:radial-gradient(circle,rgba(180,160,230,0.30),rgba(160,140,220,0.06)); bottom:-100px; left:-80px; }
+        .blob-4 { width:250px; height:250px; background:radial-gradient(circle,rgba(140,210,220,0.28),rgba(120,190,210,0.05)); top:60px; right:-60px; }
+
+        .navbar { background-color: #142a68; padding: 14px 36px; display: flex; align-items: center; position: relative; z-index: 100; }
+        .navbar-brand { color: white; font-size: 1.25rem; font-weight: 800; text-transform: uppercase; letter-spacing: 2.5px; font-family: 'Poppins', sans-serif; }
+        .navbar-nav { margin-left: auto; display: flex; gap: 1.5rem; list-style: none; align-items: center; }
+        .nav-link { color: white; font-weight: 500; text-decoration: none; font-size: 0.88rem; transition: color 0.2s; }
+        .nav-link:hover { color: #dfe4ea; }
+        .nav-link.active-nav { background: #4a6fa5; padding: 6px 14px; border-radius: 6px; }
+
+        .container { width:92%; max-width:1200px; margin:0 auto; padding:0.8rem 0 1rem; flex:1; position:relative; z-index:10; }
+        h1 { font-family: 'Poppins', sans-serif; font-size: 1.75rem; font-weight: 800; color: #1a2459; margin-bottom: 4px; }
+
+        .search-container { display:flex; justify-content:flex-end; margin-bottom:1rem; }
+        .search-container form { display:flex; align-items:center; gap:0; border:none; padding:0; background:transparent; box-shadow:none; }
+        .search-input { padding:0.72rem 1.2rem; font-size:0.92rem; border:1.5px solid #d1d5e8; border-right:none; border-radius:10px 0 0 10px; min-width:260px; outline:none; }
+        .search-btn { background:#fff; color:#1a2459; border:1.5px solid #d1d5e8; border-left:none; border-radius:0 10px 10px 0; padding:0.72rem 1.2rem; font-size:0.88rem; font-weight:600; cursor:pointer; transition:background 0.2s; }
+        .search-btn:hover { background:#142a68; color:#fff; border-color:#142a68; }
+
+        .table-wrapper { background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 4px 24px rgba(26,36,89,0.10); }
+        .table { width:100%; border-collapse:collapse; }
+        .table thead tr { background:#142a68; }
+        .table th { color:#fff; padding:10px 16px; font-size:0.78rem; font-weight:700; text-align:center; letter-spacing:0.5px; text-transform:uppercase; }
+        .table tbody tr { border-bottom:1px solid #f0f1f8; transition:background 0.15s; }
+        .table tbody tr:last-child { border-bottom:none; }
+        .table tbody tr:hover { background:#f8faff; }
+        .table td { padding:8px 16px; font-size:0.85rem; color:#1f2937; text-align:center; }
+
+        .badge { padding:3px 10px; border-radius:20px; font-size:0.70rem; font-weight:700; display:inline-block; }
+        .badge-parked { background:#d1fae5; color:#065f46; }
+        .badge-collected { background:#dbeafe; color:#1e40af; }
+        .badge-overdue { background:#fee2e2; color:#991b1b; }
+
+        .btn { padding:6px 14px; border-radius:7px; font-size:0.78rem; font-weight:700; text-transform:uppercase; cursor:pointer; border:none; text-decoration:none; display:inline-block; transition:background 0.2s; }
+        .btn-edit { background:#142a68; color:#fff; margin-right:4px; }
+        .btn-edit:hover { background:#0f1e4a; }
+        .btn-delete { background:#fee2e2; color:#b91c1c; border:1.5px solid #fca5a5; }
+        .btn-delete:hover { background:#b91c1c; color:#fff; }
+
+        .pagination-container { display:flex; justify-content:center; margin-top:24px; }
+        .pagination { display:flex; list-style:none; gap:8px; padding:0; margin:0; }
+        .pagination a { text-decoration:none; color:#142a68; padding:7px 13px; border:1.5px solid #c8cde8; border-radius:7px; font-size:0.85rem; background:#fff; transition:background 0.2s; }
+        .pagination a:hover { background:#142a68; color:#fff; border-color:#142a68; }
+        .pagination .active { color:#fff; background:#4a6fa5; padding:7px 13px; border-radius:7px; font-size:0.85rem; border:1.5px solid #4a6fa5; }
+    </style>
+</head>
+<body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="blob blob-4"></div>
+
+    <nav class="navbar">
+        <div class="navbar-brand">PARKEASE RESOURCES</div>
+        <ul class="navbar-nav">
+            {% if user.is_authenticated %}
+            <li><a class="nav-link active-nav" href="/director">Parking</a></li>
+            <li><a class="nav-link" href="/manager-battery/">Battery Corner</a></li>
+            <li><a class="nav-link" href="/manager-tyre/">Tyre Corner</a></li>
+            <li><a class="nav-link" href="/reports">📊 Reports</a></li>
+            <li><a class="nav-link" href="/logout">Logout</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1>ALL CAR ENTRIES</h1>
+        <p style="color:#6b7280; font-size:.88rem; margin-bottom:16px;">Manage and oversee all parking records.</p>
+
+        <!-- Search -->
+        <div class="search-container">
+            <form method="GET" action="">
+                <input type="text" name="q" class="search-input" placeholder="Search by car, plate, status..." value="{{ q }}">
+                <button type="submit" class="search-btn">Search</button>
+            </form>
+        </div>
+
+        <!-- Table -->
+        <div class="table-wrapper">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Car Name</th>
+                        <th>Number Plate</th>
+                        <th>Status</th>
+                        <th>Time of Parking</th>
+                        <th>Fee (UGX)</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for qt in page_obj %}
+                    <tr>
+                        <td>{{ qt.car_brand|default:"—" }}</td>
+                        <td>{{ qt.cnumberplate|default:"—" }}</td>
+                        <td>
+                            {% if qt.p_status == 'PARKED' %}
+                                <span class="badge badge-parked">PARKED</span>
+                            {% elif qt.p_status == 'COLLECTED' %}
+                                <span class="badge badge-collected">COLLECTED</span>
+                            {% elif qt.p_status == 'OVERDUE' %}
+                                <span class="badge badge-overdue">⚠️ OVERDUE</span>
+                            {% else %}
+                                <span style="color:#9aa0c0;">—</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ qt.created_at|date:"d M Y, H:i" }}</td>
+                        <td>{{ qt.fee|default:"—" }}</td>
+                        <td>
+                            <a href="/allcars/{{ qt.id }}/edit/" class="btn btn-edit">Edit</a>
+                            <a href="/allcars/{{ qt.id }}/delete/" class="btn btn-delete" onclick="return confirm('Delete this record?')">Delete</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" style="text-align:center; padding:40px; color:#9aa0c0;">No records found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-container">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                    <li><a href="?page=1">First</a></li>
+                    <li><a href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+                {% endif %}
+                {% for num in page_obj.paginator.page_range %}
+                    {% if num == page_obj.number %}
+                        <li><span class="active">{{ num }}</span></li>
+                    {% elif num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %}
+                        <li><a href="?page={{ num }}">{{ num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                {% if page_obj.has_next %}
+                    <li><a href="?page={{ page_obj.next_page_number }}">Next</a></li>
+                    <li><a href="?page={{ page_obj.paginator.num_pages }}">Last</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <footer style="background-color: #142a68; color: #ffffff; text-align: center; padding: 16px; margin-top: auto; font-size: 0.875rem; width: 100%;">
+        &copy; 2026 ParkEase. All rights reserved. Developed by Aisha.
+    </footer>
+</body>
+</html>
+{% endblock %}

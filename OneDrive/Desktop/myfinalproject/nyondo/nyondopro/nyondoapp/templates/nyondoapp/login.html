@@ -1,0 +1,168 @@
+{% load crispy_forms_tags %}
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Login - Nyondo</title>
+	<!-- Tailwind CSS -->
+	<link href="{% static 'css/output.css' %}" rel="stylesheet">
+	<!-- Font Awesome -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+	<style>
+		/* Background gradient */
+		body {
+			background: linear-gradient(to right, #a6aebf, #c5d3e8);
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			margin: 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			min-height: 100vh;
+		}
+
+		/* Main container */
+		.main-container {
+			width: 90%;
+			max-width: 1000px;
+			background: rgba(255, 255, 255, 0.9);
+			box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+			border-radius: 12px;
+			padding: 20px;
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: space-between;
+		}
+
+		/* Left section for headings and image */
+		.left-section {
+			flex: 1;
+			min-width: 300px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			text-align: center;
+		}
+
+		.left-section h3 {
+			font-size: 2rem;
+			font-weight: bold;
+			margin-bottom: 10px;
+			color: #333;
+		}
+
+		.left-section h4 {
+			font-size: 1.25rem;
+			font-weight: 500;
+			margin-bottom: 20px;
+			color: #555;
+		}
+		.left-section img {
+			width: 450px;
+			height: auto;
+			border-radius: 10px;
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+		}
+
+		/* Right section for login form */
+		.right-section {
+			flex: 1;
+			min-width: 300px;
+			max-width: 400px;
+			padding: 20px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		/* Form styling */
+		form {
+			width: 100%;
+			background: #f7f7f7;
+			padding: 20px;
+			border-radius: 12px;
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+		}
+
+		.form-title {
+			font-size: 1.5rem;
+			font-weight: 600;
+			text-align: center;
+			margin-bottom: 20px;
+			color: #333;
+		}
+
+		.form-control {
+			width: 100%;
+			padding: 10px;
+			margin-bottom: 15px;
+			border: 1px solid #ccc;
+			border-radius: 8px;
+			font-size: 1rem;
+			background-color: #fff;
+		}
+
+		.form-control:focus {
+			border-color: #3a6073;
+			outline: none;
+		}
+
+		/* Submit button */
+		.btn-submit {
+			width: 100%;
+			padding: 10px;
+			background: #3a6073;
+			color: #fff;
+			font-size: 1rem;
+			border: none;
+			border-radius: 8px;
+			cursor: pointer;
+			transition: background 0.3s;
+		}
+
+		.btn-submit:hover {
+			background: #16222a;
+		}
+
+		/* Footer styling */
+		footer {
+			margin-top: 20px;
+			text-align: center;
+			color: #555;
+			font-size: 0.9rem;
+		}
+	</style>
+</head>
+
+<body>
+	<!-- Main Flex Container -->
+	<div class="main-container">
+		<!-- Left Side (Headings and Image) -->
+		<div class="left-section">
+			<h3>PARKEASE PARKING</h3>
+			<img src="{% static 'images/cars.jpg' %}" alt="Uganda Flag">
+		</div>
+
+		<!-- Right Side (Login Form) -->
+		<div class="right-section">
+			<form method="post">
+				{% csrf_token %}
+				<div class="form-title">LOGIN</div>
+				{{ form|crispy }}
+				<button type="submit" class="btn-submit">Login</button>
+			</form>
+		</div>
+		<footer>
+			&copy; 2026 ParkEase - All Rights Reserved. Developed by Aisha.
+		</footer>
+	</div>
+
+	<!-- Footer -->
+	
+</body>
+
+</html>
